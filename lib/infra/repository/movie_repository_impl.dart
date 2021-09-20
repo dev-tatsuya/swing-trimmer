@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,10 +46,27 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
-    // TODO: ファイルストレージからも削除しないとアプリを消去しない限り容量を逼迫し続けることになる
+  Future<void> delete(Movie entity) async {
+    if (entity.id == null) {
+      return;
+    }
+    await _database.deleteMovie(entity.id!);
 
-    return _database.deleteMovie(id);
+    if (entity.thumbnailPath == null || entity.moviePath == null) {
+      return;
+    }
+
+    // Documentディレクトリ内のファイル削除
+    final imageDir = Directory(entity.thumbnailPath!);
+    final movieDir = Directory(entity.moviePath!);
+    imageDir.delete(recursive: true);
+    movieDir.delete(recursive: true);
+
+    // tempディレクトリ内のファイル（動画のみ？）削除
+    final tempPath = await _tmpPath;
+    final movieFilename = basename(entity.moviePath!);
+    final tempMovieDir = Directory('$tempPath/$movieFilename');
+    tempMovieDir.delete(recursive: true);
   }
 
   @override
@@ -91,6 +110,19 @@ class MovieRepositoryImpl implements MovieRepository {
 
   Future<String> get _localPath async =>
       (await getApplicationDocumentsDirectory()).path;
+
+  Future<String> get _tmpPath async {
+    if (Platform.isIOS) {
+      final docPath = (await getApplicationDocumentsDirectory()).path;
+      return docPath.replaceFirst('Documents', 'tmp');
+    }
+
+    if (Platform.isAndroid) {
+      // TODO: implement
+    }
+
+    return (await getTemporaryDirectory()).path;
+  }
 
   Future<List<Movie>> _mockMovieList() async {
     final dir = await _localPath;

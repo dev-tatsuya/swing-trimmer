@@ -64,7 +64,7 @@ class MovieListPage extends ConsumerWidget {
                   );
                 },
                 onLongPress: () {
-                  ref.read(movieListVm.notifier).delete(e.id!);
+                  ref.read(movieListVm.notifier).delete(e);
                 },
                 child: Image.file(
                   File(e.thumbnailPath!),

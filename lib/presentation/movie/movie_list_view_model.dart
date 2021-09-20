@@ -26,8 +26,8 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
     return _repo.store(entity);
   }
 
-  Future<void> delete(int id) async {
-    await _repo.delete(id);
+  Future<void> delete(Movie entity) async {
+    await _repo.delete(entity);
     refresh();
   }
 
