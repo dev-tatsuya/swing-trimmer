@@ -6,6 +6,6 @@ part 'movie_list_state.freezed.dart';
 @freezed
 class MovieListState with _$MovieListState {
   const factory MovieListState({
-    @Default({}) Map<DateTime?, List<Movie>> moviesMap,
+    @Default({}) Map<String, List<Movie>> moviesMap,
   }) = _MovieListState;
 }

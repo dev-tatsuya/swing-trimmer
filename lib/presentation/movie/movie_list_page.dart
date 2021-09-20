@@ -37,7 +37,7 @@ class MovieListPage extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             alignment: Alignment.centerLeft,
             child: Text(
-              dateList[index].toString(),
+              dateList[index],
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -49,9 +49,14 @@ class MovieListPage extends ConsumerWidget {
             key: UniqueKey(),
             crossAxisCount: 3,
             children: moviesMap[dateList[index]]!.map((e) {
-              return Image.file(
-                File(e.thumbnailPath!),
-                fit: BoxFit.cover,
+              return GestureDetector(
+                onLongPress: () {
+                  ref.read(movieListVm.notifier).delete(e.id!);
+                },
+                child: Image.file(
+                  File(e.thumbnailPath!),
+                  fit: BoxFit.cover,
+                ),
               );
             }).toList(),
           ),

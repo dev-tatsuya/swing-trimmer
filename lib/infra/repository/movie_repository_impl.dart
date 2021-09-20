@@ -19,14 +19,15 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   Future<List<Movie>> fetch() async {
     final List<db.Movie> dataModels = await _database.allMovieEntries;
+    final path = await _localPath;
 
     List<Movie> movieList = [];
     for (final model in dataModels) {
       movieList.add(Movie(
         id: model.id,
         title: model.title,
-        thumbnailPath: model.thumbnailPath,
-        moviePath: model.moviePath,
+        thumbnailPath: '$path/${model.thumbnailPath}',
+        moviePath: '$path/${model.moviePath}',
         isFavorite: model.isFavorite,
         swungAt: model.swungAt,
       ));
@@ -44,9 +45,10 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<void> delete(int id) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<void> delete(int id) async {
+    // TODO: ファイルストレージからも削除しないとアプリを消去しない限り容量を逼迫し続けることになる
+
+    return _database.deleteMovie(id);
   }
 
   @override
@@ -75,8 +77,8 @@ class MovieRepositoryImpl implements MovieRepository {
     // DBにそれぞれのpathを保存する
     await _database.addMovie(db.MoviesCompanion(
       title: Value(filename),
-      thumbnailPath: Value(thumbnailPath!),
-      moviePath: Value(moviePath),
+      thumbnailPath: Value(basename(thumbnailPath!)),
+      moviePath: Value(filename),
       isFavorite: const Value(false),
       swungAt: Value(await movieFile.lastModified()),
     ));

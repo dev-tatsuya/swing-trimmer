@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/repository/movie_repository_impl.dart';
@@ -26,7 +27,8 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
   }
 
   Future<void> delete(int id) async {
-    return _repo.delete(id);
+    await _repo.delete(id);
+    refresh();
   }
 
   Future<void> pickAndSaveMovie() async {
@@ -35,11 +37,11 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
     refresh();
   }
 
-  Map<DateTime?, List<Movie>> _convertMap(List<Movie> movies) {
-    Map<DateTime?, List<Movie>> moviesMap = {};
+  Map<String, List<Movie>> _convertMap(List<Movie> movies) {
+    Map<String, List<Movie>> moviesMap = {};
 
     for (final movie in movies) {
-      final swungAt = movie.swungAt;
+      final swungAt = dateString(movie.swungAt) ?? '未設定';
       if (moviesMap[swungAt] == null || moviesMap[swungAt]!.isEmpty) {
         moviesMap[swungAt] = [movie];
       } else {
@@ -48,5 +50,14 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
     }
 
     return moviesMap;
+  }
+
+  String? dateString(DateTime? dateTime) {
+    if (dateTime == null) {
+      return null;
+    }
+
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(dateTime);
   }
 }

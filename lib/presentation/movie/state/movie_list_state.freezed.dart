@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$MovieListStateTearOff {
   const _$MovieListStateTearOff();
 
-  _MovieListState call({Map<DateTime?, List<Movie>> moviesMap = const {}}) {
+  _MovieListState call({Map<String, List<Movie>> moviesMap = const {}}) {
     return _MovieListState(
       moviesMap: moviesMap,
     );
@@ -29,8 +29,7 @@ const $MovieListState = _$MovieListStateTearOff();
 
 /// @nodoc
 mixin _$MovieListState {
-  Map<DateTime?, List<Movie>> get moviesMap =>
-      throw _privateConstructorUsedError;
+  Map<String, List<Movie>> get moviesMap => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MovieListStateCopyWith<MovieListState> get copyWith =>
@@ -42,7 +41,7 @@ abstract class $MovieListStateCopyWith<$Res> {
   factory $MovieListStateCopyWith(
           MovieListState value, $Res Function(MovieListState) then) =
       _$MovieListStateCopyWithImpl<$Res>;
-  $Res call({Map<DateTime?, List<Movie>> moviesMap});
+  $Res call({Map<String, List<Movie>> moviesMap});
 }
 
 /// @nodoc
@@ -62,7 +61,7 @@ class _$MovieListStateCopyWithImpl<$Res>
       moviesMap: moviesMap == freezed
           ? _value.moviesMap
           : moviesMap // ignore: cast_nullable_to_non_nullable
-              as Map<DateTime?, List<Movie>>,
+              as Map<String, List<Movie>>,
     ));
   }
 }
@@ -74,7 +73,7 @@ abstract class _$MovieListStateCopyWith<$Res>
           _MovieListState value, $Res Function(_MovieListState) then) =
       __$MovieListStateCopyWithImpl<$Res>;
   @override
-  $Res call({Map<DateTime?, List<Movie>> moviesMap});
+  $Res call({Map<String, List<Movie>> moviesMap});
 }
 
 /// @nodoc
@@ -96,7 +95,7 @@ class __$MovieListStateCopyWithImpl<$Res>
       moviesMap: moviesMap == freezed
           ? _value.moviesMap
           : moviesMap // ignore: cast_nullable_to_non_nullable
-              as Map<DateTime?, List<Movie>>,
+              as Map<String, List<Movie>>,
     ));
   }
 }
@@ -108,7 +107,7 @@ class _$_MovieListState implements _MovieListState {
 
   @JsonKey(defaultValue: const {})
   @override
-  final Map<DateTime?, List<Movie>> moviesMap;
+  final Map<String, List<Movie>> moviesMap;
 
   @override
   String toString() {
@@ -135,12 +134,11 @@ class _$_MovieListState implements _MovieListState {
 }
 
 abstract class _MovieListState implements MovieListState {
-  const factory _MovieListState({Map<DateTime?, List<Movie>> moviesMap}) =
+  const factory _MovieListState({Map<String, List<Movie>> moviesMap}) =
       _$_MovieListState;
 
   @override
-  Map<DateTime?, List<Movie>> get moviesMap =>
-      throw _privateConstructorUsedError;
+  Map<String, List<Movie>> get moviesMap => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$MovieListStateCopyWith<_MovieListState> get copyWith =>
