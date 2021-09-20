@@ -70,7 +70,7 @@ class MovieRepositoryImpl implements MovieRepository {
 
     // 動画のパスを作成し、その動画をファイルストレージに保存する
     final filename = basename(movieFile.path);
-    final moviePath = '$localPath/$filename}';
+    final moviePath = '$localPath/$filename';
     await movieFile.saveTo(moviePath);
 
     // 撮影日を取得

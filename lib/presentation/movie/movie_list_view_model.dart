@@ -33,6 +33,10 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
 
   Future<void> pickAndSaveMovie() async {
     final file = await _repo.pick();
+    if (file == null) {
+      return;
+    }
+
     await _repo.saveImageAndMovieToDBAndFileAfterTrimmingThumbnail(file);
     refresh();
   }

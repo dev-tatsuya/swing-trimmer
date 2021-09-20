@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sticky_headers/sticky_headers.dart';
+import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
+import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 
 class MovieListPage extends ConsumerWidget {
@@ -11,7 +13,9 @@ class MovieListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: CustomAppBar(
+        title: 'Swing Trimmer',
+      ),
       body: _buildBody(ref),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -32,9 +36,9 @@ class MovieListPage extends ConsumerWidget {
       itemBuilder: (context, index) {
         return StickyHeader(
           header: Container(
-            height: 40.0,
+            height: 40,
             color: Colors.blueGrey[700],
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             alignment: Alignment.centerLeft,
             child: Text(
               dateList[index],
@@ -50,6 +54,15 @@ class MovieListPage extends ConsumerWidget {
             crossAxisCount: 3,
             children: moviesMap[dateList[index]]!.map((e) {
               return GestureDetector(
+                onTap: () {
+                  print('moviePath: ${e.moviePath}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MovieDetailPage(movie: e),
+                    ),
+                  );
+                },
                 onLongPress: () {
                   ref.read(movieListVm.notifier).delete(e.id!);
                 },
