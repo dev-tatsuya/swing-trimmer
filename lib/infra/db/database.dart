@@ -40,7 +40,8 @@ class MyDatabase extends _$MyDatabase {
         }
       });
 
-  Future<List<Movie>> get allMovieEntries async => select(movies).get();
+  Future<List<Movie>> get allMovieEntries async =>
+      (select(movies)..orderBy([(e) => OrderingTerm.desc(e.swungAt)])).get();
 
   Future updateMovie(Movie entry) async {
     return update(movies).replace(entry);
