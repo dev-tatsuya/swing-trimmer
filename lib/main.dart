@@ -30,8 +30,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MovieListPage(),
+    return MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      home: const MovieListPage(),
     );
   }
 }
@@ -125,14 +128,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final file = await _picker.pickVideo(
         source: source, maxDuration: const Duration(seconds: 10));
+    // DBとファイルストレージに動画を保存する
     await saveLocalMovie(file);
 
-    // 動画のサムネイルを取得し、画像を保存する
+    // 動画のサムネイル画像を取得し、その画像をファイルストレージに保存する
     final thumbnail = await VideoThumbnail.thumbnailFile(
       video: file!.path,
       thumbnailPath: await localPath(),
     );
     log('return thumbnail: $thumbnail');
+    // 画像のpathをDBに保存する
     await saveLocalImagePath(thumbnail);
   }
 

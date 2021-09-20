@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
@@ -18,22 +16,10 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
 
   Future<void> fetch() async {
     final movies = await _repo.fetch();
-
-    Map<DateTime?, List<Movie>> moviesMap = {};
-
-    for (final movie in movies) {
-      if (moviesMap[movie.swungAt] == null ||
-          moviesMap[movie.swungAt]!.isEmpty) {
-        moviesMap[movie.swungAt] = [movie];
-      } else {
-        moviesMap[movie.swungAt] = [...moviesMap[movie.swungAt]!, movie];
-      }
-    }
-
-    log('moviesMap: $moviesMap');
-
-    state = state.copyWith(moviesMap: moviesMap);
+    state = state.copyWith(moviesMap: _convertMap(movies));
   }
+
+  Future<void> refresh() async => fetch();
 
   Future<void> save(Movie entity) async {
     return _repo.store(entity);
@@ -42,10 +28,25 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
   Future<void> delete(int id) async {
     return _repo.delete(id);
   }
-}
 
-class DateMovieList {
-  DateMovieList(this.date, this.movieList);
-  final DateTime? date;
-  final List<Movie>? movieList;
+  Future<void> pickAndSaveMovie() async {
+    final file = await _repo.pick();
+    await _repo.saveImageAndMovieToDBAndFileAfterTrimmingThumbnail(file);
+    refresh();
+  }
+
+  Map<DateTime?, List<Movie>> _convertMap(List<Movie> movies) {
+    Map<DateTime?, List<Movie>> moviesMap = {};
+
+    for (final movie in movies) {
+      final swungAt = movie.swungAt;
+      if (moviesMap[swungAt] == null || moviesMap[swungAt]!.isEmpty) {
+        moviesMap[swungAt] = [movie];
+      } else {
+        moviesMap[swungAt] = [...moviesMap[swungAt]!, movie];
+      }
+    }
+
+    return moviesMap;
+  }
 }

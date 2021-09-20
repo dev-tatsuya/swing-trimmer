@@ -1,15 +1,92 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:moor/moor.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
+import 'package:swing_trimmer/infra/db/database.dart' as db;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 final movieRepository =
-    Provider<MovieRepository>((ref) => MovieRepositoryImpl());
+    Provider<MovieRepository>((ref) => MovieRepositoryImpl(db.MyDatabase()));
 
 class MovieRepositoryImpl implements MovieRepository {
+  MovieRepositoryImpl(this._database);
+  final db.MyDatabase _database;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   Future<List<Movie>> fetch() async {
-    final dir = (await getApplicationDocumentsDirectory()).path;
+    final List<db.Movie> dataModels = await _database.allMovieEntries;
+
+    List<Movie> movieList = [];
+    for (final model in dataModels) {
+      movieList.add(Movie(
+        id: model.id,
+        title: model.title,
+        thumbnailPath: model.thumbnailPath,
+        moviePath: model.moviePath,
+        isFavorite: model.isFavorite,
+        swungAt: model.swungAt,
+      ));
+    }
+
+    return movieList;
+
+    return _mockMovieList();
+  }
+
+  @override
+  Future<void> store(Movie entity) {
+    // TODO: implement store
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(int id) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<XFile?> pick() async {
+    return _picker.pickVideo(
+      source: ImageSource.gallery,
+      maxDuration: const Duration(seconds: 10),
+    );
+  }
+
+  @override
+  Future<void> saveImageAndMovieToDBAndFileAfterTrimmingThumbnail(
+      XFile? movieFile) async {
+    final localPath = await _localPath;
+    // 動画のサムネイル画像を取得し、その画像をファイルストレージに保存する
+    final thumbnailPath = await VideoThumbnail.thumbnailFile(
+      video: movieFile!.path,
+      thumbnailPath: localPath,
+    );
+
+    // 動画のパスを作成し、その動画をファイルストレージに保存する
+    final filename = basename(movieFile.path);
+    final moviePath = '$localPath/$filename}';
+    await movieFile.saveTo(moviePath);
+
+    // DBにそれぞれのpathを保存する
+    await _database.addMovie(db.MoviesCompanion(
+      title: Value(filename),
+      thumbnailPath: Value(thumbnailPath!),
+      moviePath: Value(moviePath),
+      isFavorite: const Value(false),
+      swungAt: Value(await movieFile.lastModified()),
+    ));
+  }
+
+  Future<String> get _localPath async =>
+      (await getApplicationDocumentsDirectory()).path;
+
+  Future<List<Movie>> _mockMovieList() async {
+    final dir = await _localPath;
     final movies = [
       Movie(
         thumbnailPath: '$dir/trim.090D1638-400B-4A58-B992-273D9458C15D.png',
@@ -77,17 +154,5 @@ class MovieRepositoryImpl implements MovieRepository {
       ),
     ];
     return movies;
-  }
-
-  @override
-  Future<void> store(Movie entity) {
-    // TODO: implement store
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> delete(int id) {
-    // TODO: implement delete
-    throw UnimplementedError();
   }
 }

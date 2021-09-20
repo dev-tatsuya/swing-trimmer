@@ -10,43 +10,53 @@ class MovieListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: _buildBody(ref),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.read(movieListVm.notifier).pickAndSaveMovie();
+        },
+        child: const Icon(Icons.video_library_outlined),
+      ),
+    );
+  }
+
+  ListView _buildBody(WidgetRef ref) {
     final state = ref.watch(movieListVm);
     final moviesMap = state.moviesMap;
     final dateList = moviesMap.keys.toList();
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: ListView.builder(
-        itemCount: moviesMap.length,
-        itemBuilder: (context, index) {
-          return StickyHeader(
-            header: Container(
-              height: 40.0,
-              color: Colors.blueGrey[700],
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                dateList[index].toString(),
-                style: const TextStyle(color: Colors.white),
-              ),
+    return ListView.builder(
+      itemCount: moviesMap.length,
+      itemBuilder: (context, index) {
+        return StickyHeader(
+          header: Container(
+            height: 40.0,
+            color: Colors.blueGrey[700],
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              dateList[index].toString(),
+              style: const TextStyle(color: Colors.white),
             ),
-            content: GridView.count(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              mainAxisSpacing: 1,
-              crossAxisSpacing: 1,
-              key: UniqueKey(),
-              crossAxisCount: 3,
-              children: moviesMap[dateList[index]]!.map((e) {
-                return Image.file(
-                  File(e.thumbnailPath!),
-                  fit: BoxFit.cover,
-                );
-              }).toList(),
-            ),
-          );
-        },
-      ),
+          ),
+          content: GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            mainAxisSpacing: 1,
+            crossAxisSpacing: 1,
+            key: UniqueKey(),
+            crossAxisCount: 3,
+            children: moviesMap[dateList[index]]!.map((e) {
+              return Image.file(
+                File(e.thumbnailPath!),
+                fit: BoxFit.cover,
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }
