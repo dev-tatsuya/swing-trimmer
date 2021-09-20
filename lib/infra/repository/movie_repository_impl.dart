@@ -1,3 +1,4 @@
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moor/moor.dart';
@@ -15,6 +16,7 @@ class MovieRepositoryImpl implements MovieRepository {
   MovieRepositoryImpl(this._database);
   final db.MyDatabase _database;
   final ImagePicker _picker = ImagePicker();
+  final FlutterFFprobe flutterFFprobe = FlutterFFprobe();
 
   @override
   Future<List<Movie>> fetch() async {
@@ -25,7 +27,6 @@ class MovieRepositoryImpl implements MovieRepository {
     for (final model in dataModels) {
       movieList.add(Movie(
         id: model.id,
-        title: model.title,
         thumbnailPath: '$path/${model.thumbnailPath}',
         moviePath: '$path/${model.moviePath}',
         isFavorite: model.isFavorite,
@@ -34,8 +35,6 @@ class MovieRepositoryImpl implements MovieRepository {
     }
 
     return movieList;
-
-    return _mockMovieList();
   }
 
   @override
@@ -74,13 +73,19 @@ class MovieRepositoryImpl implements MovieRepository {
     final moviePath = '$localPath/$filename}';
     await movieFile.saveTo(moviePath);
 
+    // 撮影日を取得
+    final mediaInformation =
+        await flutterFFprobe.getMediaInformation(moviePath);
+    Map<dynamic, dynamic>? mp = mediaInformation.getMediaProperties();
+    final String? creationDateStr =
+        mp!["tags"]["com.apple.quicktime.creationdate"];
+    final creationDate = DateTime.tryParse(creationDateStr ?? '');
+
     // DBにそれぞれのpathを保存する
     await _database.addMovie(db.MoviesCompanion(
-      title: Value(filename),
       thumbnailPath: Value(basename(thumbnailPath!)),
       moviePath: Value(filename),
-      isFavorite: const Value(false),
-      swungAt: Value(await movieFile.lastModified()),
+      swungAt: Value(creationDate),
     ));
   }
 

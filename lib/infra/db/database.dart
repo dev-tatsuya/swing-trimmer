@@ -9,11 +9,10 @@ part 'database.g.dart';
 
 class Movies extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get title => text()();
   TextColumn get thumbnailPath => text()();
   TextColumn get moviePath => text()();
-  BoolColumn get isFavorite => boolean()();
-  DateTimeColumn get swungAt => dateTime()();
+  BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get swungAt => dateTime().nullable()();
 }
 
 LazyDatabase _openConnection() {
@@ -29,7 +28,17 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(onCreate: (Migrator m) {
+        return m.createAll();
+      }, onUpgrade: (Migrator m, int from, int to) async {
+        if (from == 1) {
+          // we added the dueDate property in the change from version 1
+          await m.alterTable(TableMigration(movies));
+        }
+      });
 
   Future<List<Movie>> get allMovieEntries async => select(movies).get();
 
