@@ -7,5 +7,5 @@ abstract class MovieRepository {
   Future<void> delete(Movie entity);
   Future<XFile?> pick();
   Future<void> saveImageAndMovieToDBAndFileAfterTrimmingThumbnail(
-      XFile? movieFile);
+      XFile? originMovieFile);
 }

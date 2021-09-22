@@ -39,6 +39,10 @@ PODS:
     - sqlite3/json1
     - sqlite3/perf-threadsafe
     - sqlite3/rtree
+  - TensorFlowLiteC (2.2.0)
+  - tflite (1.1.2):
+    - Flutter
+    - TensorFlowLiteC
   - video_player (0.0.1):
     - Flutter
   - video_thumbnail (0.0.1):
@@ -53,6 +57,7 @@ DEPENDENCIES:
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
+  - tflite (from `.symlinks/plugins/tflite/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - video_thumbnail (from `.symlinks/plugins/video_thumbnail/ios`)
 
@@ -61,6 +66,7 @@ SPEC REPOS:
     - libwebp
     - mobile-ffmpeg-video
     - sqlite3
+    - TensorFlowLiteC
 
 EXTERNAL SOURCES:
   Flutter:
@@ -77,6 +83,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
+  tflite:
+    :path: ".symlinks/plugins/tflite/ios"
   video_player:
     :path: ".symlinks/plugins/video_player/ios"
   video_thumbnail:
@@ -93,6 +101,8 @@ SPEC CHECKSUMS:
   shared_preferences: 5033afbb22d372e15aff8ff766df9021b845f273
   sqlite3: 75da32fd4e3574f6c38566a9f0114cfe792c8db5
   sqlite3_flutter_libs: aedb7b6ba191f9a052dcef77691cf5d37437431c
+  TensorFlowLiteC: b3ab9e867b0b71052ca102a32a786555b330b02e
+  tflite: 7acd11db0915e2d90ab90474413068568eb605f0
   video_player: ecd305f42e9044793efd34846e1ce64c31ea6fcb
   video_thumbnail: c4e2a3c539e247d4de13cd545344fd2d26ffafd1
 
