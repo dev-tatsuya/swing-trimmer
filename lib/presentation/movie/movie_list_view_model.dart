@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
@@ -29,6 +30,10 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
   Future<void> delete(Movie entity) async {
     await _repo.delete(entity);
     refresh();
+  }
+
+  Future<XFile?> pick() async {
+    return await _repo.pick();
   }
 
   Future<void> pickAndSaveMovie() async {

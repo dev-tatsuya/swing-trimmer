@@ -6,6 +6,7 @@ import 'package:sticky_headers/sticky_headers.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
+import 'package:swing_trimmer/presentation/movie/widget/movie_list_bottom_sheet.dart';
 
 class MovieListPage extends ConsumerWidget {
   const MovieListPage({Key? key}) : super(key: key);
@@ -18,11 +19,22 @@ class MovieListPage extends ConsumerWidget {
       ),
       body: _buildBody(ref),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(movieListVm.notifier).pickAndSaveMovie();
-        },
+        onPressed: () => _showModalBottomSheet(context),
         child: const Icon(Icons.video_library_outlined),
       ),
+    );
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      builder: (_) => const MovieListBottomSheet(),
     );
   }
 
