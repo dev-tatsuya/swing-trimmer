@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/presentation/movie/movie_cut_off_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 
 class MovieListBottomSheet extends ConsumerWidget {
@@ -10,7 +11,7 @@ class MovieListBottomSheet extends ConsumerWidget {
     return Wrap(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 32),
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 40),
           child: Column(
             children: [
               Padding(
@@ -41,6 +42,16 @@ class MovieListBottomSheet extends ConsumerWidget {
                 onTap: () async {
                   final file = await ref.read(movieListVm.notifier).pick();
                   print(file?.path);
+                  if (file == null) {
+                    return;
+                  }
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MovieCutOffPage(path: file.path),
+                        fullscreenDialog: true,
+                      ));
                 },
               ),
               ListTile(
@@ -52,12 +63,11 @@ class MovieListBottomSheet extends ConsumerWidget {
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(4),
-                    child: Text('ベータ版'),
+                    child: Text('Coming Soon'),
                   ),
                 ),
                 title: const Text('自動で動画を分割する'),
                 onTap: () {
-                  Navigator.pop(context);
                   // ref.read(movieListVm.notifier).pickAndSaveMovie();
                 },
               ),

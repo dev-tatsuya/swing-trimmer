@@ -10,6 +10,7 @@ import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/db/database.dart' as db;
 import 'package:tflite/tflite.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 enum BodyPart {
   leftShoulder,
@@ -299,6 +300,57 @@ class MovieRepositoryImpl implements MovieRepository {
     }
 
     return (await getTemporaryDirectory()).path;
+  }
+
+  @override
+  Future<void> cutOffAndSave(String path, List<Duration> positions) async {
+    // 元動画の撮影日を取得
+    final mediaInformation = await _ffprobe.getMediaInformation(path);
+    Map<dynamic, dynamic>? mp = mediaInformation.getMediaProperties();
+    final String? creationDateStr =
+        mp == null ? null : mp["tags"]["com.apple.quicktime.creationdate"];
+    final creationDate = DateTime.tryParse(creationDateStr ?? '');
+    print(
+        'mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
+
+    final localPath = await _localPath;
+    final realTimeList = positions.map((e) => e.inMilliseconds / 1000).toList();
+    print('realTimeList: $realTimeList');
+
+    final List<IndexMoviePath> outputPathList = [];
+    realTimeList.asMap().forEach((index, realTime) async {
+      var startSecond = realTime - 2.0;
+      if (startSecond < 0) {
+        startSecond = 0;
+      }
+
+      final now = DateTime.now();
+      final datePath =
+          '${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}';
+      final outputPath =
+          '$localPath/$datePath-cut-off-$index${extension(path)}';
+      outputPathList.add(IndexMoviePath(index, outputPath));
+      _ffmpeg
+          .execute('-ss $startSecond -i $path -t 6 -c copy $outputPath')
+          .then((result) =>
+              print('FFmpeg cut off process exited with rc $result'));
+    });
+
+    // TODO: pathにある動画を削除する
+
+    for (final indexMoviePath in outputPathList) {
+      // トップの画像をドキュメントストレージに保存する
+      final thumbnailPath = await VideoThumbnail.thumbnailFile(
+        video: indexMoviePath.moviePath,
+      );
+
+      // DBにそれぞれのpathを保存する
+      await _database.addMovie(db.MoviesCompanion(
+        thumbnailPath: Value(basename(thumbnailPath!)),
+        moviePath: Value(basename(indexMoviePath.moviePath)),
+        swungAt: Value(creationDate),
+      ));
+    }
   }
 }
 

@@ -8,4 +8,5 @@ abstract class MovieRepository {
   Future<XFile?> pick();
   Future<void> saveImageAndMovieToDBAndFileAfterTrimmingThumbnail(
       XFile? originMovieFile);
+  Future<void> cutOffAndSave(String path, List<Duration> positions);
 }

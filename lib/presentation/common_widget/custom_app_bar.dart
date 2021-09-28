@@ -6,11 +6,13 @@ class CustomAppBar extends AppBar {
     String title = '',
     Widget? leading,
     List<Widget>? actions,
+    Color? backgroundColor,
   }) : super(
           key: key,
           title: Text(title),
           leading: leading,
           actions: actions,
+          backgroundColor: backgroundColor,
         );
 
   @override
