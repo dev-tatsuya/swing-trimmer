@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_cut_off_view_model.dart';
+import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:video_player/video_player.dart';
 
 class MovieCutOffPage extends ConsumerStatefulWidget {
@@ -62,7 +63,8 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
               child: GestureDetector(
                 onTap: () async {
                   await ref.read(movieCutOffVm).cutOff(widget.path);
-                  Navigator.pop(context);
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  ref.read(movieListVm.notifier).refresh();
                 },
                 child: Text(
                   '${cutOffList.length}つのスイングを切り取る',

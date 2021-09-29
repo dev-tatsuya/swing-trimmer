@@ -10,7 +10,6 @@ import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/db/database.dart' as db;
 import 'package:tflite/tflite.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 
 enum BodyPart {
   leftShoulder,
@@ -164,7 +163,7 @@ class MovieRepositoryImpl implements MovieRepository {
           '${now.year}${now.month}${now.day}-${now.hour}${now.minute}${now.second}';
       final outputPath =
           '$localPath/$datePath-cut-off-index${indexList[index]}${extension(moviePath)}';
-      outputPathList.add(IndexMoviePath(indexList[index], outputPath));
+      outputPathList.add(IndexMoviePath(outputPath, index: indexList[index]));
       _ffmpeg
           .execute('-ss $startSecond -i $moviePath -t 6 -c copy $outputPath')
           .then((result) =>
@@ -313,12 +312,41 @@ class MovieRepositoryImpl implements MovieRepository {
     print(
         'mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
 
+    final outputPathList = await createOutputPathList(path, positions);
+    for (final outputPath in outputPathList) {
+      final moviePath = outputPath.moviePath;
+      final imagePath = moviePath.replaceFirst(extension(path), '.png');
+      print('imagePath: $imagePath');
+      final result = await _ffmpeg.execute(
+          '-i $moviePath -ss 0 -f image2 -vframes 1 -vf scale=-1:360 $imagePath');
+      print('FFmpeg cut off image process exited with rc $result');
+
+      // DBにそれぞれのpathを保存する
+      await _database.addMovie(db.MoviesCompanion(
+        thumbnailPath: Value(basename(imagePath)),
+        moviePath: Value(basename(outputPath.moviePath)),
+        swungAt: Value(creationDate),
+      ));
+    }
+
+    // pathにある動画を削除する
+    Directory(path).delete(recursive: true);
+  }
+
+  Future<List<IndexMoviePath>> createOutputPathList(
+      String originPath, List<Duration> positions) async {
     final localPath = await _localPath;
-    final realTimeList = positions.map((e) => e.inMilliseconds / 1000).toList();
-    print('realTimeList: $realTimeList');
 
     final List<IndexMoviePath> outputPathList = [];
-    realTimeList.asMap().forEach((index, realTime) async {
+    await Future.forEach(positions, (Duration position) async {
+      final positionInSeconds =
+          (position - Duration(minutes: position.inMinutes))
+              .inSeconds
+              .toString()
+              .padLeft(2, '0');
+      final positionStr = '${position.inMinutes}:$positionInSeconds';
+
+      final realTime = position.inMilliseconds / 1000;
       var startSecond = realTime - 2.0;
       if (startSecond < 0) {
         startSecond = 0;
@@ -328,34 +356,24 @@ class MovieRepositoryImpl implements MovieRepository {
       final datePath =
           '${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}';
       final outputPath =
-          '$localPath/$datePath-cut-off-$index${extension(path)}';
-      outputPathList.add(IndexMoviePath(index, outputPath));
-      _ffmpeg
-          .execute('-ss $startSecond -i $path -t 6 -c copy $outputPath')
-          .then((result) =>
-              print('FFmpeg cut off process exited with rc $result'));
+          '$localPath/$datePath-cut-off-$positionStr${extension(originPath)}';
+      outputPathList.add(IndexMoviePath(outputPath));
+      final result = await _ffmpeg
+          .execute('-ss $startSecond -i $originPath -t 6 -c copy $outputPath');
+      print('FFmpeg cut off video process exited with rc $result');
     });
 
-    // TODO: pathにある動画を削除する
-
-    for (final indexMoviePath in outputPathList) {
-      // トップの画像をドキュメントストレージに保存する
-      final thumbnailPath = await VideoThumbnail.thumbnailFile(
-        video: indexMoviePath.moviePath,
-      );
-
-      // DBにそれぞれのpathを保存する
-      await _database.addMovie(db.MoviesCompanion(
-        thumbnailPath: Value(basename(thumbnailPath!)),
-        moviePath: Value(basename(indexMoviePath.moviePath)),
-        swungAt: Value(creationDate),
-      ));
-    }
+    return outputPathList;
   }
 }
 
 class IndexMoviePath {
-  IndexMoviePath(this.index, this.moviePath);
+  IndexMoviePath(
+    this.moviePath, {
+    this.index = -1,
+    this.imagePath = '',
+  });
   final int index;
   final String moviePath;
+  final String imagePath;
 }
