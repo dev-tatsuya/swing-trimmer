@@ -10,8 +10,20 @@ class MovieCutOffViewModel {
   MovieCutOffViewModel(this._read);
   final Reader _read;
 
-  void addCutOffPositionList(Duration? duration) {
+  Future<void> addCutOffPositionList(Duration? duration) async {
     if (duration == null) {
+      return;
+    }
+
+    var canAdd = true;
+    await Future.forEach(_read(cutOffPositionList).state,
+        (Duration cutOffPosition) {
+      if (cutOffPosition.inSeconds == duration.inSeconds) {
+        canAdd = false;
+      }
+    });
+
+    if (!canAdd) {
       return;
     }
 
