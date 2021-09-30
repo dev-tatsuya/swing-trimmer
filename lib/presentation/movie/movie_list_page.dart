@@ -65,6 +65,8 @@ class MovieListPage extends ConsumerWidget {
             key: UniqueKey(),
             crossAxisCount: 3,
             children: moviesMap[dateList[index]]!.map((movie) {
+              final isFavorite = movie.isFavorite;
+
               return GestureDetector(
                 onTap: () {
                   print('moviePath: ${movie.moviePath}');
@@ -78,9 +80,33 @@ class MovieListPage extends ConsumerWidget {
                 onLongPress: () {
                   ref.read(movieListVm.notifier).delete(movie);
                 },
-                child: Image.file(
-                  File(movie.thumbnailPath!),
-                  fit: BoxFit.cover,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.file(
+                      File(movie.thumbnailPath!),
+                      fit: BoxFit.cover,
+                    ),
+                    const Positioned(
+                      right: 4,
+                      top: 0,
+                      child: Icon(
+                        Icons.fiber_new_outlined,
+                        color: Colors.pinkAccent,
+                        size: 30,
+                      ),
+                    ),
+                    if (isFavorite)
+                      Positioned(
+                        left: 4,
+                        bottom: 4,
+                        child: Icon(
+                          Icons.favorite,
+                          color: Colors.red.withOpacity(0.8),
+                          size: 24,
+                        ),
+                      )
+                  ],
                 ),
               );
             }).toList(),

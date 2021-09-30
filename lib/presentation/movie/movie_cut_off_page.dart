@@ -57,6 +57,13 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
         backgroundColor: Colors.black.withOpacity(0.4),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.popUntil(context, (route) => route.isFirst);
+            Directory(widget.path).delete(recursive: true);
+          },
+          child: const Icon(Icons.clear, size: 24),
+        ),
         actions: [
           Center(
             child: Padding(

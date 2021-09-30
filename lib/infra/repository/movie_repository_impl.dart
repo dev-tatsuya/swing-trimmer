@@ -203,9 +203,15 @@ class MovieRepositoryImpl implements MovieRepository {
   }
 
   @override
-  Future<void> store(Movie entity) {
-    // TODO: implement store
-    throw UnimplementedError();
+  Future<void> store(Movie entity) async {
+    final dataModel = db.Movie(
+      id: entity.id ?? -1,
+      thumbnailPath: basename(entity.thumbnailPath ?? ''),
+      moviePath: basename(entity.moviePath ?? ''),
+      isFavorite: entity.isFavorite,
+      swungAt: entity.swungAt,
+    );
+    return _database.updateMovie(dataModel);
   }
 
   @override
@@ -224,12 +230,6 @@ class MovieRepositoryImpl implements MovieRepository {
     final movieDir = Directory(entity.moviePath!);
     imageDir.delete(recursive: true);
     movieDir.delete(recursive: true);
-
-    // tempディレクトリ内のファイル（動画のみ？）削除
-    final tempPath = await _tmpPath;
-    final movieFilename = basename(entity.moviePath!);
-    final tempMovieDir = Directory('$tempPath/$movieFilename');
-    tempMovieDir.delete(recursive: true);
   }
 
   @override

@@ -1,15 +1,14 @@
-class Movie {
-  Movie({
-    this.id,
-    this.thumbnailPath,
-    this.moviePath,
-    this.isFavorite = false,
-    this.swungAt,
-  });
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final int? id;
-  final String? thumbnailPath;
-  final String? moviePath;
-  final bool isFavorite;
-  final DateTime? swungAt;
+part 'movie.freezed.dart';
+
+@freezed
+class Movie with _$Movie {
+  const factory Movie({
+    int? id,
+    String? thumbnailPath,
+    String? moviePath,
+    @Default(false) bool isFavorite,
+    DateTime? swungAt,
+  }) = _Movie;
 }
