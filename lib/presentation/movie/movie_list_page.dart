@@ -64,22 +64,22 @@ class MovieListPage extends ConsumerWidget {
             crossAxisSpacing: 1,
             key: UniqueKey(),
             crossAxisCount: 3,
-            children: moviesMap[dateList[index]]!.map((e) {
+            children: moviesMap[dateList[index]]!.map((movie) {
               return GestureDetector(
                 onTap: () {
-                  print('moviePath: ${e.moviePath}');
+                  print('moviePath: ${movie.moviePath}');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MovieDetailPage(movie: e),
+                      builder: (context) => MovieDetailPage(movie: movie),
                     ),
                   );
                 },
                 onLongPress: () {
-                  ref.read(movieListVm.notifier).delete(e);
+                  ref.read(movieListVm.notifier).delete(movie);
                 },
                 child: Image.file(
-                  File(e.thumbnailPath!),
+                  File(movie.thumbnailPath!),
                   fit: BoxFit.cover,
                 ),
               );
