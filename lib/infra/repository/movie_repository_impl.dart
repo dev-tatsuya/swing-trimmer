@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:moor/moor.dart';
@@ -365,6 +366,11 @@ class MovieRepositoryImpl implements MovieRepository {
     });
 
     return outputPathList;
+  }
+
+  @override
+  Future<bool?> saveMovieToGallery(String path) async {
+    return GallerySaver.saveVideo(path);
   }
 }
 

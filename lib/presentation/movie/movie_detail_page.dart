@@ -56,8 +56,10 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
     });
   }
 
-  void _saveToGallery() {
-    vm.saveToGallery();
+  void _saveToGallery() async {
+    final ok = await vm.saveToGallery(movie.moviePath);
+    showOkAlertDialog(
+        context: context, title: '端末への保存に${ok ? '成功' : '失敗'}しました');
   }
 
   void _delete() async {

@@ -24,7 +24,13 @@ class MovieDetailViewModel {
     return _repo.store(newEntity);
   }
 
-  Future<void> saveToGallery() async {}
+  Future<bool> saveToGallery(String? path) async {
+    if (path == null) {
+      return false;
+    }
+
+    return (await _repo.saveMovieToGallery(path) ?? false);
+  }
 
   Future<void> delete(Movie entity) async {
     return _repo.delete(entity);
