@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -75,6 +76,7 @@ class MovieRepositoryImpl implements MovieRepository {
         thumbnailPath: '$path/${model.thumbnailPath}',
         moviePath: '$path/${model.moviePath}',
         isFavorite: model.isFavorite,
+        isRead: model.isRead,
         swungAt: model.swungAt,
       ));
     }
@@ -86,7 +88,7 @@ class MovieRepositoryImpl implements MovieRepository {
     final tmpPath = await _tmpPath;
     final res = await Tflite.loadModel(
         model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
-    print('loadModel result: $res');
+    log('loadModel result: $res');
 
     final List<LeftWristHeight> leftWristHeight = [];
 
@@ -120,7 +122,7 @@ class MovieRepositoryImpl implements MovieRepository {
     final List<LeftWristHeight> list = leftWristHeight
         .map((e) => LeftWristHeight(e.index, 1.0 - e.y))
         .toList();
-    print('yList: $list');
+    log('yList: $list');
 
     double lastHeight = 0;
     double lastHeightDelta = 0;
@@ -137,10 +139,10 @@ class MovieRepositoryImpl implements MovieRepository {
       lastHeightDelta = currentDelta;
     }
 
-    print('maybeHitIndexList: $maybeHitIndexList');
+    log('maybeHitIndexList: $maybeHitIndexList');
 
     final hitIndexList = findHitIndexList(maybeHitIndexList);
-    print('hitIndexList: $hitIndexList');
+    log('hitIndexList: $hitIndexList');
 
     return await cutOffMovie(hitIndexList, moviePath);
   }
@@ -166,8 +168,8 @@ class MovieRepositoryImpl implements MovieRepository {
       outputPathList.add(IndexMoviePath(outputPath, index: indexList[index]));
       _ffmpeg
           .execute('-ss $startSecond -i $moviePath -t 6 -c copy $outputPath')
-          .then((result) =>
-              print('FFmpeg cut off process exited with rc $result'));
+          .then(
+              (result) => log('FFmpeg cut off process exited with rc $result'));
     });
 
     return outputPathList;
@@ -209,6 +211,7 @@ class MovieRepositoryImpl implements MovieRepository {
       thumbnailPath: basename(entity.thumbnailPath ?? ''),
       moviePath: basename(entity.moviePath ?? ''),
       isFavorite: entity.isFavorite,
+      isRead: entity.isRead,
       swungAt: entity.swungAt,
     );
     return _database.updateMovie(dataModel);
@@ -254,20 +257,19 @@ class MovieRepositoryImpl implements MovieRepository {
     final String? creationDateStr =
         mp == null ? null : mp["tags"]["com.apple.quicktime.creationdate"];
     final creationDate = DateTime.tryParse(creationDateStr ?? '');
-    print(
-        'mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
+    log('mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
 
     final tmpPath = await _tmpPath;
 
     // 分割する
     final result = await _ffmpeg
         .execute('-i ${originMovieFile.path} -r 30 $tmpPath/image%04d.png');
-    print('FFmpeg divide process exited with rc $result');
+    log('FFmpeg divide process exited with rc $result');
 
     // 姿勢推定をして、ストレージに動画を保存
     // ストレージに保存されたパスのリストを返す
     final indexMoviePathList = await estimate(originMovieFile.path);
-    print('indexMoviePathList: $indexMoviePathList');
+    log('indexMoviePathList: $indexMoviePathList');
 
     for (final indexMoviePath in indexMoviePathList) {
       // トップの画像をドキュメントストレージに保存する
@@ -309,17 +311,16 @@ class MovieRepositoryImpl implements MovieRepository {
     final String? creationDateStr =
         mp == null ? null : mp["tags"]["com.apple.quicktime.creationdate"];
     final creationDate = DateTime.tryParse(creationDateStr ?? '');
-    print(
-        'mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
+    log('mp["tags"]["com.apple.quicktime.creationdate"] creationDate: $creationDate');
 
     final outputPathList = await createOutputPathList(path, positions);
     for (final outputPath in outputPathList) {
       final moviePath = outputPath.moviePath;
       final imagePath = moviePath.replaceFirst(extension(path), '.png');
-      print('imagePath: $imagePath');
+      log('imagePath: $imagePath');
       final result = await _ffmpeg.execute(
           '-i $moviePath -ss 0 -f image2 -vframes 1 -vf scale=-1:360 $imagePath');
-      print('FFmpeg cut off image process exited with rc $result');
+      log('FFmpeg cut off image process exited with rc $result');
 
       // DBにそれぞれのpathを保存する
       await _database.addMovie(db.MoviesCompanion(
@@ -360,7 +361,7 @@ class MovieRepositoryImpl implements MovieRepository {
       outputPathList.add(IndexMoviePath(outputPath));
       final result = await _ffmpeg
           .execute('-ss $startSecond -i $originPath -t 6 -c copy $outputPath');
-      print('FFmpeg cut off video process exited with rc $result');
+      log('FFmpeg cut off video process exited with rc $result');
     });
 
     return outputPathList;

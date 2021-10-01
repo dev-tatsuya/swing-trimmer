@@ -12,12 +12,14 @@ class Movie extends DataClass implements Insertable<Movie> {
   final String thumbnailPath;
   final String moviePath;
   final bool isFavorite;
+  final bool isRead;
   final DateTime? swungAt;
   Movie(
       {required this.id,
       required this.thumbnailPath,
       required this.moviePath,
       required this.isFavorite,
+      required this.isRead,
       this.swungAt});
   factory Movie.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -31,6 +33,8 @@ class Movie extends DataClass implements Insertable<Movie> {
           .mapFromDatabaseResponse(data['${effectivePrefix}movie_path'])!,
       isFavorite: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}is_favorite'])!,
+      isRead: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}is_read'])!,
       swungAt: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}swung_at']),
     );
@@ -42,6 +46,7 @@ class Movie extends DataClass implements Insertable<Movie> {
     map['thumbnail_path'] = Variable<String>(thumbnailPath);
     map['movie_path'] = Variable<String>(moviePath);
     map['is_favorite'] = Variable<bool>(isFavorite);
+    map['is_read'] = Variable<bool>(isRead);
     if (!nullToAbsent || swungAt != null) {
       map['swung_at'] = Variable<DateTime?>(swungAt);
     }
@@ -54,6 +59,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       thumbnailPath: Value(thumbnailPath),
       moviePath: Value(moviePath),
       isFavorite: Value(isFavorite),
+      isRead: Value(isRead),
       swungAt: swungAt == null && nullToAbsent
           ? const Value.absent()
           : Value(swungAt),
@@ -68,6 +74,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       thumbnailPath: serializer.fromJson<String>(json['thumbnailPath']),
       moviePath: serializer.fromJson<String>(json['moviePath']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+      isRead: serializer.fromJson<bool>(json['isRead']),
       swungAt: serializer.fromJson<DateTime?>(json['swungAt']),
     );
   }
@@ -79,6 +86,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       'thumbnailPath': serializer.toJson<String>(thumbnailPath),
       'moviePath': serializer.toJson<String>(moviePath),
       'isFavorite': serializer.toJson<bool>(isFavorite),
+      'isRead': serializer.toJson<bool>(isRead),
       'swungAt': serializer.toJson<DateTime?>(swungAt),
     };
   }
@@ -88,12 +96,14 @@ class Movie extends DataClass implements Insertable<Movie> {
           String? thumbnailPath,
           String? moviePath,
           bool? isFavorite,
+          bool? isRead,
           DateTime? swungAt}) =>
       Movie(
         id: id ?? this.id,
         thumbnailPath: thumbnailPath ?? this.thumbnailPath,
         moviePath: moviePath ?? this.moviePath,
         isFavorite: isFavorite ?? this.isFavorite,
+        isRead: isRead ?? this.isRead,
         swungAt: swungAt ?? this.swungAt,
       );
   @override
@@ -103,6 +113,7 @@ class Movie extends DataClass implements Insertable<Movie> {
           ..write('thumbnailPath: $thumbnailPath, ')
           ..write('moviePath: $moviePath, ')
           ..write('isFavorite: $isFavorite, ')
+          ..write('isRead: $isRead, ')
           ..write('swungAt: $swungAt')
           ..write(')'))
         .toString();
@@ -113,8 +124,10 @@ class Movie extends DataClass implements Insertable<Movie> {
       id.hashCode,
       $mrjc(
           thumbnailPath.hashCode,
-          $mrjc(moviePath.hashCode,
-              $mrjc(isFavorite.hashCode, swungAt.hashCode)))));
+          $mrjc(
+              moviePath.hashCode,
+              $mrjc(isFavorite.hashCode,
+                  $mrjc(isRead.hashCode, swungAt.hashCode))))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -123,6 +136,7 @@ class Movie extends DataClass implements Insertable<Movie> {
           other.thumbnailPath == this.thumbnailPath &&
           other.moviePath == this.moviePath &&
           other.isFavorite == this.isFavorite &&
+          other.isRead == this.isRead &&
           other.swungAt == this.swungAt);
 }
 
@@ -131,12 +145,14 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
   final Value<String> thumbnailPath;
   final Value<String> moviePath;
   final Value<bool> isFavorite;
+  final Value<bool> isRead;
   final Value<DateTime?> swungAt;
   const MoviesCompanion({
     this.id = const Value.absent(),
     this.thumbnailPath = const Value.absent(),
     this.moviePath = const Value.absent(),
     this.isFavorite = const Value.absent(),
+    this.isRead = const Value.absent(),
     this.swungAt = const Value.absent(),
   });
   MoviesCompanion.insert({
@@ -144,6 +160,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     required String thumbnailPath,
     required String moviePath,
     this.isFavorite = const Value.absent(),
+    this.isRead = const Value.absent(),
     this.swungAt = const Value.absent(),
   })  : thumbnailPath = Value(thumbnailPath),
         moviePath = Value(moviePath);
@@ -152,6 +169,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     Expression<String>? thumbnailPath,
     Expression<String>? moviePath,
     Expression<bool>? isFavorite,
+    Expression<bool>? isRead,
     Expression<DateTime?>? swungAt,
   }) {
     return RawValuesInsertable({
@@ -159,6 +177,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       if (thumbnailPath != null) 'thumbnail_path': thumbnailPath,
       if (moviePath != null) 'movie_path': moviePath,
       if (isFavorite != null) 'is_favorite': isFavorite,
+      if (isRead != null) 'is_read': isRead,
       if (swungAt != null) 'swung_at': swungAt,
     });
   }
@@ -168,12 +187,14 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       Value<String>? thumbnailPath,
       Value<String>? moviePath,
       Value<bool>? isFavorite,
+      Value<bool>? isRead,
       Value<DateTime?>? swungAt}) {
     return MoviesCompanion(
       id: id ?? this.id,
       thumbnailPath: thumbnailPath ?? this.thumbnailPath,
       moviePath: moviePath ?? this.moviePath,
       isFavorite: isFavorite ?? this.isFavorite,
+      isRead: isRead ?? this.isRead,
       swungAt: swungAt ?? this.swungAt,
     );
   }
@@ -193,6 +214,9 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     if (isFavorite.present) {
       map['is_favorite'] = Variable<bool>(isFavorite.value);
     }
+    if (isRead.present) {
+      map['is_read'] = Variable<bool>(isRead.value);
+    }
     if (swungAt.present) {
       map['swung_at'] = Variable<DateTime?>(swungAt.value);
     }
@@ -206,6 +230,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
           ..write('thumbnailPath: $thumbnailPath, ')
           ..write('moviePath: $moviePath, ')
           ..write('isFavorite: $isFavorite, ')
+          ..write('isRead: $isRead, ')
           ..write('swungAt: $swungAt')
           ..write(')'))
         .toString();
@@ -238,13 +263,20 @@ class $MoviesTable extends Movies with TableInfo<$MoviesTable, Movie> {
       requiredDuringInsert: false,
       defaultConstraints: 'CHECK (is_favorite IN (0, 1))',
       defaultValue: const Constant(false));
+  final VerificationMeta _isReadMeta = const VerificationMeta('isRead');
+  late final GeneratedColumn<bool?> isRead = GeneratedColumn<bool?>(
+      'is_read', aliasedName, false,
+      typeName: 'INTEGER',
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (is_read IN (0, 1))',
+      defaultValue: const Constant(false));
   final VerificationMeta _swungAtMeta = const VerificationMeta('swungAt');
   late final GeneratedColumn<DateTime?> swungAt = GeneratedColumn<DateTime?>(
       'swung_at', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, thumbnailPath, moviePath, isFavorite, swungAt];
+      [id, thumbnailPath, moviePath, isFavorite, isRead, swungAt];
   @override
   String get aliasedName => _alias ?? 'movies';
   @override
@@ -276,6 +308,10 @@ class $MoviesTable extends Movies with TableInfo<$MoviesTable, Movie> {
           _isFavoriteMeta,
           isFavorite.isAcceptableOrUnknown(
               data['is_favorite']!, _isFavoriteMeta));
+    }
+    if (data.containsKey('is_read')) {
+      context.handle(_isReadMeta,
+          isRead.isAcceptableOrUnknown(data['is_read']!, _isReadMeta));
     }
     if (data.containsKey('swung_at')) {
       context.handle(_swungAtMeta,

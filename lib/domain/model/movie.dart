@@ -9,6 +9,7 @@ class Movie with _$Movie {
     String? thumbnailPath,
     String? moviePath,
     @Default(false) bool isFavorite,
+    @Default(false) bool isRead,
     DateTime? swungAt,
   }) = _Movie;
 }

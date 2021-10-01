@@ -11,7 +11,17 @@ class MovieDetailViewModel {
   MovieRepository get _repo => _read(movieRepository);
 
   Future<void> toggleFavorite(Movie entity) async {
-    return _repo.store(entity);
+    final newEntity = entity.copyWith(isFavorite: !entity.isFavorite);
+    return _repo.store(newEntity);
+  }
+
+  Future<void> readIfNecessary(Movie entity) async {
+    if (entity.isRead) {
+      return;
+    }
+
+    final newEntity = entity.copyWith(isRead: true);
+    return _repo.store(newEntity);
   }
 
   Future<void> saveToGallery() async {}

@@ -12,6 +12,7 @@ class Movies extends Table {
   TextColumn get thumbnailPath => text()();
   TextColumn get moviePath => text()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
+  BoolColumn get isRead => boolean().withDefault(const Constant(false))();
   DateTimeColumn get swungAt => dateTime().nullable()();
 }
 
@@ -28,17 +29,22 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(onCreate: (Migrator m) {
-        return m.createAll();
-      }, onUpgrade: (Migrator m, int from, int to) async {
-        if (from == 1) {
-          // we added the dueDate property in the change from version 1
-          await m.alterTable(TableMigration(movies));
-        }
-      });
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (Migrator m) {
+          return m.createAll();
+        },
+        onUpgrade: (Migrator m, int from, int to) async {
+          if (from == 1) {
+            // we added the dueDate property in the change from version 1
+            await m.alterTable(TableMigration(movies));
+          } else if (from == 2) {
+            await m.addColumn(movies, movies.isRead);
+          }
+        },
+      );
 
   Future<List<Movie>> get allMovieEntries async =>
       (select(movies)..orderBy([(e) => OrderingTerm.desc(e.swungAt)])).get();

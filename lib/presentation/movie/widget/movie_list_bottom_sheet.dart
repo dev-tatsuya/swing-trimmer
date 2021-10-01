@@ -41,7 +41,6 @@ class MovieListBottomSheet extends ConsumerWidget {
                 title: const Text('手動で動画を分割する'),
                 onTap: () async {
                   final file = await ref.read(movieListVm.notifier).pick();
-                  print(file?.path);
                   if (file == null) {
                     return;
                   }
@@ -63,7 +62,7 @@ class MovieListBottomSheet extends ConsumerWidget {
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(4),
-                    child: Text('Coming Soon'),
+                    child: Text('Coming soon'),
                   ),
                 ),
                 title: const Text('自動で動画を分割する'),

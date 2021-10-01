@@ -66,10 +66,25 @@ class MovieListPage extends ConsumerWidget {
             crossAxisCount: 3,
             children: moviesMap[dateList[index]]!.map((movie) {
               final isFavorite = movie.isFavorite;
+              final isRead = movie.isRead;
+
+              final imageBox = Image.file(
+                File(movie.thumbnailPath!),
+                fit: BoxFit.cover,
+              );
+
+              final imageWidget = !isRead
+                  ? ClipRect(
+                      child: Banner(
+                        location: BannerLocation.topEnd,
+                        message: 'New',
+                        child: imageBox,
+                      ),
+                    )
+                  : imageBox;
 
               return GestureDetector(
                 onTap: () {
-                  print('moviePath: ${movie.moviePath}');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -83,19 +98,7 @@ class MovieListPage extends ConsumerWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.file(
-                      File(movie.thumbnailPath!),
-                      fit: BoxFit.cover,
-                    ),
-                    const Positioned(
-                      right: 4,
-                      top: 0,
-                      child: Icon(
-                        Icons.fiber_new_outlined,
-                        color: Colors.pinkAccent,
-                        size: 30,
-                      ),
-                    ),
+                    imageWidget,
                     if (isFavorite)
                       Positioned(
                         left: 4,

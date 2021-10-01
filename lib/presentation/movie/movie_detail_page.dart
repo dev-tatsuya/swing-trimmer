@@ -26,14 +26,17 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   late FlickManager _flickManager;
   late bool _isFavorite;
 
+  Movie get movie => widget.movie;
+
   @override
   void initState() {
     super.initState();
     _flickManager = FlickManager(
       videoPlayerController:
-          VideoPlayerController.file(File(widget.movie.moviePath ?? '')),
+          VideoPlayerController.file(File(movie.moviePath ?? '')),
     );
-    _isFavorite = widget.movie.isFavorite;
+    _isFavorite = movie.isFavorite;
+    ref.read(movieDetailVm).readIfNecessary(movie);
   }
 
   @override
@@ -46,8 +49,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   MovieDetailViewModel get vm => ref.read(movieDetailVm);
 
   void _toggleFavorite() {
-    final newMovie = widget.movie.copyWith(isFavorite: !_isFavorite);
-    vm.toggleFavorite(newMovie);
+    vm.toggleFavorite(movie);
     setState(() {
       _isFavorite = !_isFavorite;
     });
