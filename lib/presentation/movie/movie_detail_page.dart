@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -59,8 +60,22 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
     vm.saveToGallery();
   }
 
-  void _delete() {
-    vm.delete();
+  void _delete() async {
+    if (movie.isFavorite) {
+      final result = await showOkCancelAlertDialog(
+        context: context,
+        title: 'お気に入り登録されています',
+        message: '本当に削除しますか？',
+      );
+
+      if (result == OkCancelResult.cancel) {
+        return;
+      }
+    }
+
+    vm.delete(movie);
+    Navigator.pop(context);
+    ref.read(movieListVm.notifier).refresh();
   }
 
   void _more() {
@@ -94,15 +109,10 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
             onTap: _saveToGallery,
             child: const Icon(Icons.save_alt, size: iconSize),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 48),
           GestureDetector(
             onTap: _delete,
             child: const Icon(Icons.delete, size: iconSize),
-          ),
-          const SizedBox(width: 16),
-          GestureDetector(
-            onTap: _more,
-            child: const Icon(Icons.more_vert, size: iconSize),
           ),
           const SizedBox(width: 8),
         ],

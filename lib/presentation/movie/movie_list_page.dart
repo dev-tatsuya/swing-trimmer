@@ -92,9 +92,6 @@ class MovieListPage extends ConsumerWidget {
                     ),
                   );
                 },
-                onLongPress: () {
-                  ref.read(movieListVm.notifier).delete(movie);
-                },
                 child: Stack(
                   fit: StackFit.expand,
                   children: [

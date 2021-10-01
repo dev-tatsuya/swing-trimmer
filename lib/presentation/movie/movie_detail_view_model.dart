@@ -25,6 +25,10 @@ class MovieDetailViewModel {
   }
 
   Future<void> saveToGallery() async {}
-  Future<void> delete() async {}
+
+  Future<void> delete(Movie entity) async {
+    return _repo.delete(entity);
+  }
+
   Future<void> changeSwingAt() async {}
 }
