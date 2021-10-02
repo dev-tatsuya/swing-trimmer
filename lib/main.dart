@@ -20,3 +20,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+const backgroundColor = Color(0xff424242);

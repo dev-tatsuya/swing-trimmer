@@ -5,6 +5,7 @@ import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
+import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
@@ -86,40 +87,45 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(
-        backgroundColor: Colors.black.withOpacity(0.4),
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-            ref.read(movieListVm.notifier).refresh();
-          },
-          child: const Icon(Icons.chevron_left, size: 36),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: _toggleFavorite,
-            child: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? Colors.red.withOpacity(0.8) : null,
-              size: iconSize,
+    return Container(
+      color: backgroundColor,
+      child: SafeArea(
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: CustomAppBar(
+            backgroundColor: Colors.black.withOpacity(0.4),
+            leading: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                ref.read(movieListVm.notifier).refresh();
+              },
+              child: const Icon(Icons.chevron_left, size: 36),
             ),
+            actions: [
+              GestureDetector(
+                onTap: _toggleFavorite,
+                child: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: _isFavorite ? Colors.red.withOpacity(0.8) : null,
+                  size: iconSize,
+                ),
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: _saveToGallery,
+                child: const Icon(Icons.save_alt, size: iconSize),
+              ),
+              const SizedBox(width: 48),
+              GestureDetector(
+                onTap: _delete,
+                child: const Icon(Icons.delete, size: iconSize),
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
-          const SizedBox(width: 16),
-          GestureDetector(
-            onTap: _saveToGallery,
-            child: const Icon(Icons.save_alt, size: iconSize),
-          ),
-          const SizedBox(width: 48),
-          GestureDetector(
-            onTap: _delete,
-            child: const Icon(Icons.delete, size: iconSize),
-          ),
-          const SizedBox(width: 8),
-        ],
+          body: CustomMoviePlayer(flickManager: _flickManager),
+        ),
       ),
-      body: CustomMoviePlayer(flickManager: _flickManager),
     );
   }
 }

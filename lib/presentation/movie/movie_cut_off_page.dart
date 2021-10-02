@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_cut_off_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
@@ -53,40 +54,45 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
       ));
     });
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(
-        backgroundColor: Colors.black.withOpacity(0.4),
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.popUntil(context, (route) => route.isFirst);
-            Directory(widget.path).delete(recursive: true);
-          },
-          child: const Icon(Icons.clear, size: 24),
-        ),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                onTap: () async {
-                  await ref.read(movieCutOffVm).cutOff(widget.path);
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                  ref.read(movieListVm.notifier).refresh();
-                },
-                child: Text(
-                  '${cutOffList.length}つのスイングを切り取る',
-                  style: const TextStyle(fontSize: 16),
+    return Container(
+      color: backgroundColor,
+      child: SafeArea(
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: CustomAppBar(
+            backgroundColor: Colors.black.withOpacity(0.4),
+            leading: GestureDetector(
+              onTap: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Directory(widget.path).delete(recursive: true);
+              },
+              child: const Icon(Icons.clear, size: 24),
+            ),
+            actions: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await ref.read(movieCutOffVm).cutOff(widget.path);
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                      ref.read(movieListVm.notifier).refresh();
+                    },
+                    child: Text(
+                      '${cutOffList.length}つのスイングを切り取る',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-      body: CustomMoviePlayer(
-        flickManager: _flickManager,
-        chipRow: chipRow,
-        isCutOff: true,
+          body: CustomMoviePlayer(
+            flickManager: _flickManager,
+            chipRow: chipRow,
+            isCutOff: true,
+          ),
+        ),
       ),
     );
   }
