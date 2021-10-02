@@ -14,13 +14,15 @@ class Movie extends DataClass implements Insertable<Movie> {
   final bool isFavorite;
   final bool isRead;
   final DateTime? swungAt;
+  final String? club;
   Movie(
       {required this.id,
       required this.thumbnailPath,
       required this.moviePath,
       required this.isFavorite,
       required this.isRead,
-      this.swungAt});
+      this.swungAt,
+      this.club});
   factory Movie.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -37,6 +39,8 @@ class Movie extends DataClass implements Insertable<Movie> {
           .mapFromDatabaseResponse(data['${effectivePrefix}is_read'])!,
       swungAt: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}swung_at']),
+      club: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}club']),
     );
   }
   @override
@@ -49,6 +53,9 @@ class Movie extends DataClass implements Insertable<Movie> {
     map['is_read'] = Variable<bool>(isRead);
     if (!nullToAbsent || swungAt != null) {
       map['swung_at'] = Variable<DateTime?>(swungAt);
+    }
+    if (!nullToAbsent || club != null) {
+      map['club'] = Variable<String?>(club);
     }
     return map;
   }
@@ -63,6 +70,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       swungAt: swungAt == null && nullToAbsent
           ? const Value.absent()
           : Value(swungAt),
+      club: club == null && nullToAbsent ? const Value.absent() : Value(club),
     );
   }
 
@@ -76,6 +84,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       isRead: serializer.fromJson<bool>(json['isRead']),
       swungAt: serializer.fromJson<DateTime?>(json['swungAt']),
+      club: serializer.fromJson<String?>(json['club']),
     );
   }
   @override
@@ -88,6 +97,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'isRead': serializer.toJson<bool>(isRead),
       'swungAt': serializer.toJson<DateTime?>(swungAt),
+      'club': serializer.toJson<String?>(club),
     };
   }
 
@@ -97,7 +107,8 @@ class Movie extends DataClass implements Insertable<Movie> {
           String? moviePath,
           bool? isFavorite,
           bool? isRead,
-          DateTime? swungAt}) =>
+          DateTime? swungAt,
+          String? club}) =>
       Movie(
         id: id ?? this.id,
         thumbnailPath: thumbnailPath ?? this.thumbnailPath,
@@ -105,6 +116,7 @@ class Movie extends DataClass implements Insertable<Movie> {
         isFavorite: isFavorite ?? this.isFavorite,
         isRead: isRead ?? this.isRead,
         swungAt: swungAt ?? this.swungAt,
+        club: club ?? this.club,
       );
   @override
   String toString() {
@@ -114,7 +126,8 @@ class Movie extends DataClass implements Insertable<Movie> {
           ..write('moviePath: $moviePath, ')
           ..write('isFavorite: $isFavorite, ')
           ..write('isRead: $isRead, ')
-          ..write('swungAt: $swungAt')
+          ..write('swungAt: $swungAt, ')
+          ..write('club: $club')
           ..write(')'))
         .toString();
   }
@@ -126,8 +139,10 @@ class Movie extends DataClass implements Insertable<Movie> {
           thumbnailPath.hashCode,
           $mrjc(
               moviePath.hashCode,
-              $mrjc(isFavorite.hashCode,
-                  $mrjc(isRead.hashCode, swungAt.hashCode))))));
+              $mrjc(
+                  isFavorite.hashCode,
+                  $mrjc(isRead.hashCode,
+                      $mrjc(swungAt.hashCode, club.hashCode)))))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -137,7 +152,8 @@ class Movie extends DataClass implements Insertable<Movie> {
           other.moviePath == this.moviePath &&
           other.isFavorite == this.isFavorite &&
           other.isRead == this.isRead &&
-          other.swungAt == this.swungAt);
+          other.swungAt == this.swungAt &&
+          other.club == this.club);
 }
 
 class MoviesCompanion extends UpdateCompanion<Movie> {
@@ -147,6 +163,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
   final Value<bool> isFavorite;
   final Value<bool> isRead;
   final Value<DateTime?> swungAt;
+  final Value<String?> club;
   const MoviesCompanion({
     this.id = const Value.absent(),
     this.thumbnailPath = const Value.absent(),
@@ -154,6 +171,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     this.isFavorite = const Value.absent(),
     this.isRead = const Value.absent(),
     this.swungAt = const Value.absent(),
+    this.club = const Value.absent(),
   });
   MoviesCompanion.insert({
     this.id = const Value.absent(),
@@ -162,6 +180,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     this.isFavorite = const Value.absent(),
     this.isRead = const Value.absent(),
     this.swungAt = const Value.absent(),
+    this.club = const Value.absent(),
   })  : thumbnailPath = Value(thumbnailPath),
         moviePath = Value(moviePath);
   static Insertable<Movie> custom({
@@ -171,6 +190,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     Expression<bool>? isFavorite,
     Expression<bool>? isRead,
     Expression<DateTime?>? swungAt,
+    Expression<String?>? club,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -179,6 +199,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (isRead != null) 'is_read': isRead,
       if (swungAt != null) 'swung_at': swungAt,
+      if (club != null) 'club': club,
     });
   }
 
@@ -188,7 +209,8 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       Value<String>? moviePath,
       Value<bool>? isFavorite,
       Value<bool>? isRead,
-      Value<DateTime?>? swungAt}) {
+      Value<DateTime?>? swungAt,
+      Value<String?>? club}) {
     return MoviesCompanion(
       id: id ?? this.id,
       thumbnailPath: thumbnailPath ?? this.thumbnailPath,
@@ -196,6 +218,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       isFavorite: isFavorite ?? this.isFavorite,
       isRead: isRead ?? this.isRead,
       swungAt: swungAt ?? this.swungAt,
+      club: club ?? this.club,
     );
   }
 
@@ -220,6 +243,9 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     if (swungAt.present) {
       map['swung_at'] = Variable<DateTime?>(swungAt.value);
     }
+    if (club.present) {
+      map['club'] = Variable<String?>(club.value);
+    }
     return map;
   }
 
@@ -231,7 +257,8 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
           ..write('moviePath: $moviePath, ')
           ..write('isFavorite: $isFavorite, ')
           ..write('isRead: $isRead, ')
-          ..write('swungAt: $swungAt')
+          ..write('swungAt: $swungAt, ')
+          ..write('club: $club')
           ..write(')'))
         .toString();
   }
@@ -274,9 +301,13 @@ class $MoviesTable extends Movies with TableInfo<$MoviesTable, Movie> {
   late final GeneratedColumn<DateTime?> swungAt = GeneratedColumn<DateTime?>(
       'swung_at', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _clubMeta = const VerificationMeta('club');
+  late final GeneratedColumn<String?> club = GeneratedColumn<String?>(
+      'club', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, thumbnailPath, moviePath, isFavorite, isRead, swungAt];
+      [id, thumbnailPath, moviePath, isFavorite, isRead, swungAt, club];
   @override
   String get aliasedName => _alias ?? 'movies';
   @override
@@ -316,6 +347,10 @@ class $MoviesTable extends Movies with TableInfo<$MoviesTable, Movie> {
     if (data.containsKey('swung_at')) {
       context.handle(_swungAtMeta,
           swungAt.isAcceptableOrUnknown(data['swung_at']!, _swungAtMeta));
+    }
+    if (data.containsKey('club')) {
+      context.handle(
+          _clubMeta, club.isAcceptableOrUnknown(data['club']!, _clubMeta));
     }
     return context;
   }

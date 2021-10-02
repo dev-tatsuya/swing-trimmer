@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/repository/movie_repository_impl.dart';
@@ -38,6 +39,11 @@ class MovieDetailViewModel {
 
   Future<void> changeSwungAt(Movie entity, DateTime date) async {
     final newEntity = entity.copyWith(swungAt: date);
+    return _repo.store(newEntity);
+  }
+
+  Future<void> selectClub(Movie entity, Club club) async {
+    final newEntity = entity.copyWith(club: club);
     return _repo.store(newEntity);
   }
 }

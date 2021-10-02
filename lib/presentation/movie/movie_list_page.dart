@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sticky_headers/sticky_headers.dart';
+import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
@@ -67,6 +68,8 @@ class MovieListPage extends ConsumerWidget {
             children: moviesMap[dateList[index]]!.map((movie) {
               final isFavorite = movie.isFavorite;
               final isRead = movie.isRead;
+              final isSelectedClub =
+                  movie.club != null && movie.club != Club.none;
 
               final imageBox = Image.file(
                 File(movie.thumbnailPath!),
@@ -105,7 +108,22 @@ class MovieListPage extends ConsumerWidget {
                           color: Colors.red.withOpacity(0.8),
                           size: 24,
                         ),
-                      )
+                      ),
+                    if (isSelectedClub)
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Container(
+                          color: Colors.black45,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Text(
+                              movie.club!.displayName,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               );

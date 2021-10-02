@@ -23,7 +23,8 @@ class _$MovieTearOff {
       String? moviePath,
       bool isFavorite = false,
       bool isRead = false,
-      DateTime? swungAt}) {
+      DateTime? swungAt,
+      Club? club}) {
     return _Movie(
       id: id,
       thumbnailPath: thumbnailPath,
@@ -31,6 +32,7 @@ class _$MovieTearOff {
       isFavorite: isFavorite,
       isRead: isRead,
       swungAt: swungAt,
+      club: club,
     );
   }
 }
@@ -46,6 +48,7 @@ mixin _$Movie {
   bool get isFavorite => throw _privateConstructorUsedError;
   bool get isRead => throw _privateConstructorUsedError;
   DateTime? get swungAt => throw _privateConstructorUsedError;
+  Club? get club => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MovieCopyWith<Movie> get copyWith => throw _privateConstructorUsedError;
@@ -61,7 +64,8 @@ abstract class $MovieCopyWith<$Res> {
       String? moviePath,
       bool isFavorite,
       bool isRead,
-      DateTime? swungAt});
+      DateTime? swungAt,
+      Club? club});
 }
 
 /// @nodoc
@@ -80,6 +84,7 @@ class _$MovieCopyWithImpl<$Res> implements $MovieCopyWith<$Res> {
     Object? isFavorite = freezed,
     Object? isRead = freezed,
     Object? swungAt = freezed,
+    Object? club = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed
@@ -106,6 +111,10 @@ class _$MovieCopyWithImpl<$Res> implements $MovieCopyWith<$Res> {
           ? _value.swungAt
           : swungAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      club: club == freezed
+          ? _value.club
+          : club // ignore: cast_nullable_to_non_nullable
+              as Club?,
     ));
   }
 }
@@ -121,7 +130,8 @@ abstract class _$MovieCopyWith<$Res> implements $MovieCopyWith<$Res> {
       String? moviePath,
       bool isFavorite,
       bool isRead,
-      DateTime? swungAt});
+      DateTime? swungAt,
+      Club? club});
 }
 
 /// @nodoc
@@ -141,6 +151,7 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
     Object? isFavorite = freezed,
     Object? isRead = freezed,
     Object? swungAt = freezed,
+    Object? club = freezed,
   }) {
     return _then(_Movie(
       id: id == freezed
@@ -167,6 +178,10 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
           ? _value.swungAt
           : swungAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      club: club == freezed
+          ? _value.club
+          : club // ignore: cast_nullable_to_non_nullable
+              as Club?,
     ));
   }
 }
@@ -180,7 +195,8 @@ class _$_Movie implements _Movie {
       this.moviePath,
       this.isFavorite = false,
       this.isRead = false,
-      this.swungAt});
+      this.swungAt,
+      this.club});
 
   @override
   final int? id;
@@ -196,10 +212,12 @@ class _$_Movie implements _Movie {
   final bool isRead;
   @override
   final DateTime? swungAt;
+  @override
+  final Club? club;
 
   @override
   String toString() {
-    return 'Movie(id: $id, thumbnailPath: $thumbnailPath, moviePath: $moviePath, isFavorite: $isFavorite, isRead: $isRead, swungAt: $swungAt)';
+    return 'Movie(id: $id, thumbnailPath: $thumbnailPath, moviePath: $moviePath, isFavorite: $isFavorite, isRead: $isRead, swungAt: $swungAt, club: $club)';
   }
 
   @override
@@ -220,7 +238,10 @@ class _$_Movie implements _Movie {
             (identical(other.isRead, isRead) ||
                 const DeepCollectionEquality().equals(other.isRead, isRead)) &&
             (identical(other.swungAt, swungAt) ||
-                const DeepCollectionEquality().equals(other.swungAt, swungAt)));
+                const DeepCollectionEquality()
+                    .equals(other.swungAt, swungAt)) &&
+            (identical(other.club, club) ||
+                const DeepCollectionEquality().equals(other.club, club)));
   }
 
   @override
@@ -231,7 +252,8 @@ class _$_Movie implements _Movie {
       const DeepCollectionEquality().hash(moviePath) ^
       const DeepCollectionEquality().hash(isFavorite) ^
       const DeepCollectionEquality().hash(isRead) ^
-      const DeepCollectionEquality().hash(swungAt);
+      const DeepCollectionEquality().hash(swungAt) ^
+      const DeepCollectionEquality().hash(club);
 
   @JsonKey(ignore: true)
   @override
@@ -246,7 +268,8 @@ abstract class _Movie implements Movie {
       String? moviePath,
       bool isFavorite,
       bool isRead,
-      DateTime? swungAt}) = _$_Movie;
+      DateTime? swungAt,
+      Club? club}) = _$_Movie;
 
   @override
   int? get id => throw _privateConstructorUsedError;
@@ -260,6 +283,8 @@ abstract class _Movie implements Movie {
   bool get isRead => throw _privateConstructorUsedError;
   @override
   DateTime? get swungAt => throw _privateConstructorUsedError;
+  @override
+  Club? get club => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$MovieCopyWith<_Movie> get copyWith => throw _privateConstructorUsedError;

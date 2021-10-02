@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:swing_trimmer/domain/model/club.dart';
 
 part 'movie.freezed.dart';
 
@@ -11,5 +12,6 @@ class Movie with _$Movie {
     @Default(false) bool isFavorite,
     @Default(false) bool isRead,
     DateTime? swungAt,
+    Club? club,
   }) = _Movie;
 }

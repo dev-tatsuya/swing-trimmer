@@ -31,3 +31,4 @@ class MyApp extends StatelessWidget {
 }
 
 const backgroundColor = Color(0xff424242);
+const modalBackgroundColor = Color(0xff303030);

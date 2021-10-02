@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/db/database.dart' as db;
@@ -79,6 +81,7 @@ class MovieRepositoryImpl implements MovieRepository {
         isFavorite: model.isFavorite,
         isRead: model.isRead,
         swungAt: model.swungAt,
+        club: EnumToString.fromString(Club.values, model.club ?? ''),
       ));
     }
 
@@ -214,6 +217,9 @@ class MovieRepositoryImpl implements MovieRepository {
       isFavorite: entity.isFavorite,
       isRead: entity.isRead,
       swungAt: entity.swungAt,
+      club: entity.club == null
+          ? null
+          : EnumToString.convertToString(entity.club),
     );
     return _database.updateMovie(dataModel);
   }

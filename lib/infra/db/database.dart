@@ -14,6 +14,7 @@ class Movies extends Table {
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   BoolColumn get isRead => boolean().withDefault(const Constant(false))();
   DateTimeColumn get swungAt => dateTime().nullable()();
+  TextColumn get club => text().nullable()();
 }
 
 LazyDatabase _openConnection() {
@@ -29,7 +30,7 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -42,6 +43,8 @@ class MyDatabase extends _$MyDatabase {
             await m.alterTable(TableMigration(movies));
           } else if (from == 2) {
             await m.addColumn(movies, movies.isRead);
+          } else if (from == 3) {
+            await m.addColumn(movies, movies.club);
           }
         },
       );
