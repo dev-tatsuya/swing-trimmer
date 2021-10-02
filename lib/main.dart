@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_page.dart';
 
@@ -17,6 +18,14 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       home: const MovieListPage(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ja'),
+      ],
     );
   }
 }

@@ -48,7 +48,7 @@ class MovieListPage extends ConsumerWidget {
       itemBuilder: (context, index) {
         return StickyHeader(
           header: Container(
-            height: 40,
+            height: 36,
             color: Colors.blueGrey[700],
             padding: const EdgeInsets.symmetric(horizontal: 10),
             alignment: Alignment.centerLeft,

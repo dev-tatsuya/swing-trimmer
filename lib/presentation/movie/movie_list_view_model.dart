@@ -1,10 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/repository/movie_repository_impl.dart';
 import 'package:swing_trimmer/presentation/movie/state/movie_list_state.dart';
+import 'package:swing_trimmer/util/string.dart';
 
 final movieListVm = StateNotifierProvider<MovieListViewModel, MovieListState>(
     (ref) => MovieListViewModel(ref.read));
@@ -50,7 +50,7 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
     Map<String, List<Movie>> moviesMap = {};
 
     for (final movie in movies) {
-      final swungAt = dateString(movie.swungAt) ?? '未設定';
+      final swungAt = dateStringWithWeek(movie.swungAt) ?? '未設定';
       if (moviesMap[swungAt] == null || moviesMap[swungAt]!.isEmpty) {
         moviesMap[swungAt] = [movie];
       } else {
@@ -59,14 +59,5 @@ class MovieListViewModel extends StateNotifier<MovieListState> {
     }
 
     return moviesMap;
-  }
-
-  String? dateString(DateTime? dateTime) {
-    if (dateTime == null) {
-      return null;
-    }
-
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    return formatter.format(dateTime);
   }
 }

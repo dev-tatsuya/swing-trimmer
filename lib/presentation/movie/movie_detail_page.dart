@@ -10,6 +10,7 @@ import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/widget/custom_movie_player.dart';
+import 'package:swing_trimmer/util/string.dart';
 import 'package:video_player/video_player.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
@@ -81,8 +82,23 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
     ref.read(movieListVm.notifier).refresh();
   }
 
-  void _more() {
-    vm.changeSwingAt();
+  void _changeSwungAt() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: movie.swungAt ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      locale: const Locale("ja"),
+    );
+    print('pickedDate: $pickedDate');
+    if (pickedDate == null) {
+      return;
+    }
+    await vm.changeSwungAt(movie, pickedDate);
+    showOkAlertDialog(
+      context: context,
+      title: '${dateStringWithWeek(pickedDate)}\nに変更しました',
+    );
   }
 
   @override
@@ -109,6 +125,11 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                   color: _isFavorite ? Colors.red.withOpacity(0.8) : null,
                   size: iconSize,
                 ),
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: _changeSwungAt,
+                child: const Icon(Icons.date_range_outlined, size: iconSize),
               ),
               const SizedBox(width: 16),
               GestureDetector(

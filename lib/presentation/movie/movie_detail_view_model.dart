@@ -36,5 +36,8 @@ class MovieDetailViewModel {
     return _repo.delete(entity);
   }
 
-  Future<void> changeSwingAt() async {}
+  Future<void> changeSwungAt(Movie entity, DateTime date) async {
+    final newEntity = entity.copyWith(swungAt: date);
+    return _repo.store(newEntity);
+  }
 }
