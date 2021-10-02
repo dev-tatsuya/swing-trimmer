@@ -14,7 +14,7 @@ class Movies extends Table {
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   BoolColumn get isRead => boolean().withDefault(const Constant(false))();
   DateTimeColumn get swungAt => dateTime().nullable()();
-  TextColumn get club => text().nullable()();
+  TextColumn get club => text().withDefault(const Constant('none'))();
 }
 
 LazyDatabase _openConnection() {
@@ -30,7 +30,7 @@ class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -45,6 +45,17 @@ class MyDatabase extends _$MyDatabase {
             await m.addColumn(movies, movies.isRead);
           } else if (from == 3) {
             await m.addColumn(movies, movies.club);
+          } else if (from == 4) {
+            await m.alterTable(TableMigration(movies));
+          } else if (from == 5) {
+            await m.alterTable(TableMigration(
+              movies,
+              columnTransformer: {
+                movies.club: movies.club.isNotNull(),
+                // clubをnon-nullableにしたけど↓の書き方が正解だったかな...
+                // movies.club: movies.club.cast<String>(),
+              },
+            ));
           }
         },
       );

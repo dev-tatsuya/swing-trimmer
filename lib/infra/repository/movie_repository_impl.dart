@@ -81,7 +81,7 @@ class MovieRepositoryImpl implements MovieRepository {
         isFavorite: model.isFavorite,
         isRead: model.isRead,
         swungAt: model.swungAt,
-        club: EnumToString.fromString(Club.values, model.club ?? ''),
+        club: EnumToString.fromString(Club.values, model.club) ?? Club.none,
       ));
     }
 
@@ -217,9 +217,7 @@ class MovieRepositoryImpl implements MovieRepository {
       isFavorite: entity.isFavorite,
       isRead: entity.isRead,
       swungAt: entity.swungAt,
-      club: entity.club == null
-          ? null
-          : EnumToString.convertToString(entity.club),
+      club: EnumToString.convertToString(entity.club),
     );
     return _database.updateMovie(dataModel);
   }

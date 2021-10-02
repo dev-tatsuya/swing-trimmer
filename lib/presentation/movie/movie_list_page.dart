@@ -68,8 +68,7 @@ class MovieListPage extends ConsumerWidget {
             children: moviesMap[dateList[index]]!.map((movie) {
               final isFavorite = movie.isFavorite;
               final isRead = movie.isRead;
-              final isSelectedClub =
-                  movie.club != null && movie.club != Club.none;
+              final isSelectedClub = movie.club != Club.none;
 
               final imageBox = Image.file(
                 File(movie.thumbnailPath!),
@@ -118,7 +117,7 @@ class MovieListPage extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(4),
                             child: Text(
-                              movie.club!.displayName,
+                              movie.club.displayName,
                               style: const TextStyle(fontSize: 13),
                             ),
                           ),

@@ -24,7 +24,7 @@ class _$MovieTearOff {
       bool isFavorite = false,
       bool isRead = false,
       DateTime? swungAt,
-      Club? club}) {
+      Club club = Club.none}) {
     return _Movie(
       id: id,
       thumbnailPath: thumbnailPath,
@@ -48,7 +48,7 @@ mixin _$Movie {
   bool get isFavorite => throw _privateConstructorUsedError;
   bool get isRead => throw _privateConstructorUsedError;
   DateTime? get swungAt => throw _privateConstructorUsedError;
-  Club? get club => throw _privateConstructorUsedError;
+  Club get club => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MovieCopyWith<Movie> get copyWith => throw _privateConstructorUsedError;
@@ -65,7 +65,7 @@ abstract class $MovieCopyWith<$Res> {
       bool isFavorite,
       bool isRead,
       DateTime? swungAt,
-      Club? club});
+      Club club});
 }
 
 /// @nodoc
@@ -114,7 +114,7 @@ class _$MovieCopyWithImpl<$Res> implements $MovieCopyWith<$Res> {
       club: club == freezed
           ? _value.club
           : club // ignore: cast_nullable_to_non_nullable
-              as Club?,
+              as Club,
     ));
   }
 }
@@ -131,7 +131,7 @@ abstract class _$MovieCopyWith<$Res> implements $MovieCopyWith<$Res> {
       bool isFavorite,
       bool isRead,
       DateTime? swungAt,
-      Club? club});
+      Club club});
 }
 
 /// @nodoc
@@ -181,7 +181,7 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
       club: club == freezed
           ? _value.club
           : club // ignore: cast_nullable_to_non_nullable
-              as Club?,
+              as Club,
     ));
   }
 }
@@ -196,7 +196,7 @@ class _$_Movie implements _Movie {
       this.isFavorite = false,
       this.isRead = false,
       this.swungAt,
-      this.club});
+      this.club = Club.none});
 
   @override
   final int? id;
@@ -212,8 +212,9 @@ class _$_Movie implements _Movie {
   final bool isRead;
   @override
   final DateTime? swungAt;
+  @JsonKey(defaultValue: Club.none)
   @override
-  final Club? club;
+  final Club club;
 
   @override
   String toString() {
@@ -269,7 +270,7 @@ abstract class _Movie implements Movie {
       bool isFavorite,
       bool isRead,
       DateTime? swungAt,
-      Club? club}) = _$_Movie;
+      Club club}) = _$_Movie;
 
   @override
   int? get id => throw _privateConstructorUsedError;
@@ -284,7 +285,7 @@ abstract class _Movie implements Movie {
   @override
   DateTime? get swungAt => throw _privateConstructorUsedError;
   @override
-  Club? get club => throw _privateConstructorUsedError;
+  Club get club => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$MovieCopyWith<_Movie> get copyWith => throw _privateConstructorUsedError;

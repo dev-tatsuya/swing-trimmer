@@ -12,6 +12,6 @@ class Movie with _$Movie {
     @Default(false) bool isFavorite,
     @Default(false) bool isRead,
     DateTime? swungAt,
-    Club? club,
+    @Default(Club.none) Club club,
   }) = _Movie;
 }

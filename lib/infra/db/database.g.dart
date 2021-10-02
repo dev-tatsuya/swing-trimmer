@@ -14,7 +14,7 @@ class Movie extends DataClass implements Insertable<Movie> {
   final bool isFavorite;
   final bool isRead;
   final DateTime? swungAt;
-  final String? club;
+  final String club;
   Movie(
       {required this.id,
       required this.thumbnailPath,
@@ -22,7 +22,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       required this.isFavorite,
       required this.isRead,
       this.swungAt,
-      this.club});
+      required this.club});
   factory Movie.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -40,7 +40,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       swungAt: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}swung_at']),
       club: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}club']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}club'])!,
     );
   }
   @override
@@ -54,9 +54,7 @@ class Movie extends DataClass implements Insertable<Movie> {
     if (!nullToAbsent || swungAt != null) {
       map['swung_at'] = Variable<DateTime?>(swungAt);
     }
-    if (!nullToAbsent || club != null) {
-      map['club'] = Variable<String?>(club);
-    }
+    map['club'] = Variable<String>(club);
     return map;
   }
 
@@ -70,7 +68,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       swungAt: swungAt == null && nullToAbsent
           ? const Value.absent()
           : Value(swungAt),
-      club: club == null && nullToAbsent ? const Value.absent() : Value(club),
+      club: Value(club),
     );
   }
 
@@ -84,7 +82,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       isRead: serializer.fromJson<bool>(json['isRead']),
       swungAt: serializer.fromJson<DateTime?>(json['swungAt']),
-      club: serializer.fromJson<String?>(json['club']),
+      club: serializer.fromJson<String>(json['club']),
     );
   }
   @override
@@ -97,7 +95,7 @@ class Movie extends DataClass implements Insertable<Movie> {
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'isRead': serializer.toJson<bool>(isRead),
       'swungAt': serializer.toJson<DateTime?>(swungAt),
-      'club': serializer.toJson<String?>(club),
+      'club': serializer.toJson<String>(club),
     };
   }
 
@@ -163,7 +161,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
   final Value<bool> isFavorite;
   final Value<bool> isRead;
   final Value<DateTime?> swungAt;
-  final Value<String?> club;
+  final Value<String> club;
   const MoviesCompanion({
     this.id = const Value.absent(),
     this.thumbnailPath = const Value.absent(),
@@ -190,7 +188,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
     Expression<bool>? isFavorite,
     Expression<bool>? isRead,
     Expression<DateTime?>? swungAt,
-    Expression<String?>? club,
+    Expression<String>? club,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -210,7 +208,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       Value<bool>? isFavorite,
       Value<bool>? isRead,
       Value<DateTime?>? swungAt,
-      Value<String?>? club}) {
+      Value<String>? club}) {
     return MoviesCompanion(
       id: id ?? this.id,
       thumbnailPath: thumbnailPath ?? this.thumbnailPath,
@@ -244,7 +242,7 @@ class MoviesCompanion extends UpdateCompanion<Movie> {
       map['swung_at'] = Variable<DateTime?>(swungAt.value);
     }
     if (club.present) {
-      map['club'] = Variable<String?>(club.value);
+      map['club'] = Variable<String>(club.value);
     }
     return map;
   }
@@ -303,8 +301,10 @@ class $MoviesTable extends Movies with TableInfo<$MoviesTable, Movie> {
       typeName: 'INTEGER', requiredDuringInsert: false);
   final VerificationMeta _clubMeta = const VerificationMeta('club');
   late final GeneratedColumn<String?> club = GeneratedColumn<String?>(
-      'club', aliasedName, true,
-      typeName: 'TEXT', requiredDuringInsert: false);
+      'club', aliasedName, false,
+      typeName: 'TEXT',
+      requiredDuringInsert: false,
+      defaultValue: const Constant('none'));
   @override
   List<GeneratedColumn> get $columns =>
       [id, thumbnailPath, moviePath, isFavorite, isRead, swungAt, club];
