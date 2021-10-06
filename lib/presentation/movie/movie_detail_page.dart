@@ -30,6 +30,7 @@ class MovieDetailPage extends ConsumerStatefulWidget {
 class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   late FlickManager _flickManager;
   late bool _isFavorite;
+  late Club _club;
 
   Movie get movie => widget.movie;
 
@@ -41,6 +42,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
           VideoPlayerController.file(File(movie.moviePath ?? '')),
     );
     _isFavorite = movie.isFavorite;
+    _club = movie.club;
     ref.read(movieDetailVm).readIfNecessary(movie);
   }
 
@@ -91,6 +93,17 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
       locale: const Locale("ja"),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: mainGreenColor,
+              surface: modalBackgroundColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedDate == null) {
       return;
@@ -130,7 +143,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                       children: [
                         MultiSelect<Club>(
                           title: 'クラブ選択',
-                          value: movie.club,
+                          value: _club,
                           itemList: Club.values
                               .map((e) => MultiSelectItem<Club>(
                                   value: e, title: e.displayName))
@@ -165,7 +178,6 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
       },
     );
 
-    print('selectedClub: $selectedClub');
     if (selectedClub == null) {
       return;
     }
@@ -174,6 +186,10 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
       context: context,
       title: '${selectedClub.displayName}に設定しました',
     );
+
+    setState(() {
+      _club = selectedClub;
+    });
   }
 
   @override

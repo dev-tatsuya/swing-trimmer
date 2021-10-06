@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:swing_trimmer/domain/model/club.dart';
+import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
@@ -20,8 +21,12 @@ class MovieListPage extends ConsumerWidget {
       ),
       body: _buildBody(ref),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: mainGreenColor,
         onPressed: () => _showModalBottomSheet(context),
-        child: const Icon(Icons.video_library_outlined),
+        child: const Icon(
+          Icons.video_library_outlined,
+          color: Colors.white,
+        ),
       ),
     );
   }

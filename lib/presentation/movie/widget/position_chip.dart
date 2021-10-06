@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/movie/movie_cut_off_view_model.dart';
 
 class PositionChip extends ConsumerWidget {
@@ -29,7 +30,7 @@ class PositionChip extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.6),
+        color: mainGreenColor.withOpacity(0.6),
         borderRadius: const BorderRadius.all(
           Radius.circular(16),
         ),

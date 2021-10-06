@@ -124,7 +124,7 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
                     width: 90,
                     height: 44,
                     decoration: const BoxDecoration(
-                      color: Colors.blueGrey,
+                      color: mainGreenColor,
                       borderRadius: BorderRadius.all(
                         Radius.circular(30),
                       ),
@@ -135,6 +135,7 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -156,10 +157,10 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(24)),
         border: Border.all(
-          color: selected ? Colors.blueGrey : backgroundColor,
+          color: selected ? mainGreenColor : backgroundColor,
           width: selected ? 2 : 1,
         ),
-        color: selected ? Colors.blueGrey : backgroundColor,
+        color: selected ? mainGreenColor : backgroundColor,
       ),
       child: Padding(
         padding: selected
@@ -167,10 +168,10 @@ class _MultiSelectState<T> extends State<MultiSelect<T>> {
             : const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: Colors.white,
+            color: selected ? Colors.black : Colors.white,
           ),
         ),
       ),

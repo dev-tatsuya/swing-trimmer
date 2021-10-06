@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/movie/movie_cut_off_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 
@@ -58,7 +59,7 @@ class MovieListBottomSheet extends ConsumerWidget {
                   leading: const Icon(Icons.flash_auto, size: 24),
                   trailing: Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: mainGreenColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Padding(
