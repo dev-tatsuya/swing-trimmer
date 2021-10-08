@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -374,7 +375,32 @@ class MovieRepositoryImpl implements MovieRepository {
 
   @override
   Future<bool?> saveMovieToGallery(String path) async {
+    // 無課金
+    if (false) {
+      await _saveLogoToTmp();
+      final tempPath = '${await _tmpPath}/with-logo${extension(path)}';
+      final result = await _ffmpeg.execute(
+          '-i $path -i ${await _tmpPath}/logo.png -filter_complex [0:v]overlay=W-w:H-h $tempPath');
+      log('FFmpeg merge logo into video process exited with rc $result');
+      return GallerySaver.saveVideo(tempPath);
+    }
+
+    // 課金
     return GallerySaver.saveVideo(path);
+  }
+
+  Future<void> _saveLogoToTmp() async {
+    await _getImageFileFromAssets('logo.png');
+  }
+
+  Future<File> _getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/images/$path');
+
+    final file = File('${await _tmpPath}/$path');
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
   }
 }
 
