@@ -53,11 +53,20 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.1.2
+  flutter_launcher_icons: ^0.9.2
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.4
   freezed: ^0.14.5
   moor_generator: ^4.5.1
+
+flutter_icons:
+  image_path_android: assets/images/icon_for_android.png
+  image_path_ios: assets/images/icon_for_ios.png
+  android: true
+  ios: true
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: assets/images/icon_for_android.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
