@@ -1,15 +1,16 @@
 import 'dart:io';
 
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/const/const.dart';
 import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_cut_off_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/widget/custom_movie_player.dart';
 import 'package:swing_trimmer/presentation/movie/widget/position_chip.dart';
-import 'package:video_player/video_player.dart';
 
 class MovieCutOffPage extends ConsumerStatefulWidget {
   const MovieCutOffPage({Key? key, required this.path}) : super(key: key);
@@ -21,18 +22,35 @@ class MovieCutOffPage extends ConsumerStatefulWidget {
 }
 
 class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
-  late FlickManager _flickManager;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {
     super.initState();
-    _flickManager = FlickManager(
-        videoPlayerController: VideoPlayerController.file(File(widget.path)));
+    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
+      aspectRatio: 1 / 2,
+      fit: BoxFit.cover,
+      autoPlay: true,
+      controlsConfiguration: BetterPlayerControlsConfiguration(
+        enableFullscreen: false,
+        enableMute: false,
+        enableSkips: false,
+        enableOverflowMenu: false,
+        playIcon: Icons.play_arrow,
+        controlBarColor: Colors.black.withOpacity(0.4),
+      ),
+    ));
+
+    final _betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.file,
+      widget.path,
+    );
+    _betterPlayerController.setupDataSource(_betterPlayerDataSource);
   }
 
   @override
   void dispose() {
-    _flickManager.dispose();
+    _betterPlayerController.dispose();
     super.dispose();
   }
 
@@ -48,7 +66,8 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
           position: value,
           index: key,
           onSeekTo: (position) async {
-            await _flickManager.flickControlManager?.seekTo(position);
+            await _betterPlayerController.videoPlayerController
+                ?.seekTo(position);
           },
         ),
       ));
@@ -69,6 +88,26 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
               child: const Icon(Icons.clear, size: 24),
             ),
             actions: [
+              GestureDetector(
+                onTap: () {
+                  showOkAlertDialog(
+                    context: context,
+                    title: '使い方',
+                    message: cutOffText,
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.lightbulb_outline, size: 24),
+                    Text(
+                      '使い方',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -88,7 +127,7 @@ class _MovieCutOffPageState extends ConsumerState<MovieCutOffPage> {
             ],
           ),
           body: CustomMoviePlayer(
-            flickManager: _flickManager,
+            controller: _betterPlayerController,
             chipRow: chipRow,
             isCutOff: true,
           ),

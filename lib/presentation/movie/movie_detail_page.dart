@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:swing_trimmer/const/const.dart';
 import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/main.dart';
@@ -13,7 +12,6 @@ import 'package:swing_trimmer/presentation/movie/movie_detail_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/widget/custom_movie_player.dart';
 import 'package:swing_trimmer/util/string.dart';
-import 'package:video_player/video_player.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
   const MovieDetailPage({
@@ -28,7 +26,7 @@ class MovieDetailPage extends ConsumerStatefulWidget {
 }
 
 class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
-  late FlickManager _flickManager;
+  late BetterPlayerController _betterPlayerController;
   late bool _isFavorite;
   late Club _club;
 
@@ -37,10 +35,27 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   @override
   void initState() {
     super.initState();
-    _flickManager = FlickManager(
-      videoPlayerController:
-          VideoPlayerController.file(File(movie.moviePath ?? '')),
+
+    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
+      aspectRatio: 1 / 2,
+      fit: BoxFit.cover,
+      autoPlay: true,
+      controlsConfiguration: BetterPlayerControlsConfiguration(
+        enableFullscreen: false,
+        enableMute: false,
+        enableSkips: false,
+        enableOverflowMenu: false,
+        playIcon: Icons.play_arrow,
+        controlBarColor: Colors.black.withOpacity(0.4),
+      ),
+    ));
+
+    final _betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.file,
+      widget.movie.moviePath ?? '',
     );
+    _betterPlayerController.setupDataSource(_betterPlayerDataSource);
+
     _isFavorite = movie.isFavorite;
     _club = movie.club;
     ref.read(movieDetailVm).readIfNecessary(movie);
@@ -48,7 +63,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
 
   @override
   void dispose() {
-    _flickManager.dispose();
+    _betterPlayerController.dispose();
     super.dispose();
   }
 
@@ -210,6 +225,26 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
             ),
             actions: [
               GestureDetector(
+                onTap: () {
+                  showOkAlertDialog(
+                    context: context,
+                    title: '使い方',
+                    message: baseText,
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.lightbulb_outline, size: 24),
+                    Text(
+                      '使い方',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
                 onTap: _toggleFavorite,
                 child: Icon(
                   _isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -236,7 +271,8 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                 onTap: _saveToGallery,
                 child: const Icon(Icons.save_alt, size: iconSize),
               ),
-              const SizedBox(width: 48),
+              const SizedBox(width: 16),
+              const SizedBox(width: 16),
               GestureDetector(
                 onTap: _delete,
                 child: const Icon(Icons.delete, size: iconSize),
@@ -244,7 +280,9 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
               const SizedBox(width: 8),
             ],
           ),
-          body: CustomMoviePlayer(flickManager: _flickManager),
+          body: CustomMoviePlayer(
+            controller: _betterPlayerController,
+          ),
         ),
       ),
     );
