@@ -35,6 +35,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   @override
   void initState() {
     super.initState();
+    ref.read(movieDetailVm).readIfNecessary(movie);
 
     _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
       aspectRatio: 1 / 2,
@@ -58,7 +59,6 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
 
     _isFavorite = movie.isFavorite;
     _club = movie.club;
-    ref.read(movieDetailVm).readIfNecessary(movie);
   }
 
   @override

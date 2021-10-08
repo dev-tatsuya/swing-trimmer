@@ -19,6 +19,7 @@ class MovieListPage extends ConsumerWidget {
         title: Image.asset(
           'assets/images/app_logo.png',
         ),
+        leading: const Icon(Icons.menu, size: 28),
         centerTitle: true,
         toolbarHeight: 44,
       ),

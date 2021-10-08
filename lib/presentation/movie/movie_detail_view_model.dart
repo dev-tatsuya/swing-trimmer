@@ -12,7 +12,8 @@ class MovieDetailViewModel {
   MovieRepository get _repo => _read(movieRepository);
 
   Future<void> toggleFavorite(Movie entity) async {
-    final newEntity = entity.copyWith(isFavorite: !entity.isFavorite);
+    final newEntity =
+        entity.copyWith(isFavorite: !entity.isFavorite, isRead: true);
     return _repo.store(newEntity);
   }
 
@@ -38,12 +39,12 @@ class MovieDetailViewModel {
   }
 
   Future<void> changeSwungAt(Movie entity, DateTime date) async {
-    final newEntity = entity.copyWith(swungAt: date);
+    final newEntity = entity.copyWith(swungAt: date, isRead: true);
     return _repo.store(newEntity);
   }
 
   Future<void> selectClub(Movie entity, Club club) async {
-    final newEntity = entity.copyWith(club: club);
+    final newEntity = entity.copyWith(club: club, isRead: true);
     return _repo.store(newEntity);
   }
 }
