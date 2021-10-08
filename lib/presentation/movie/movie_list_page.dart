@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/main.dart';
-import 'package:swing_trimmer/presentation/common_widget/custom_app_bar.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/widget/movie_list_bottom_sheet.dart';
@@ -16,8 +15,12 @@ class MovieListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Swing Trimmer',
+      appBar: AppBar(
+        title: Image.asset(
+          'assets/images/app_logo.png',
+        ),
+        centerTitle: true,
+        toolbarHeight: 44,
       ),
       body: _buildBody(ref),
       floatingActionButton: FloatingActionButton(
