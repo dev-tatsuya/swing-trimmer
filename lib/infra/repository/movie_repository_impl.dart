@@ -14,7 +14,6 @@ import 'package:swing_trimmer/domain/model/club.dart';
 import 'package:swing_trimmer/domain/model/movie.dart';
 import 'package:swing_trimmer/domain/repository/movie_repository.dart';
 import 'package:swing_trimmer/infra/db/database.dart' as db;
-import 'package:tflite/tflite.dart';
 
 enum BodyPart {
   leftShoulder,
@@ -89,68 +88,68 @@ class MovieRepositoryImpl implements MovieRepository {
     return movieList;
   }
 
-  Future<List<IndexMoviePath>> estimate(String moviePath) async {
-    final tmpPath = await _tmpPath;
-    final res = await Tflite.loadModel(
-        model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
-    log('loadModel result: $res');
-
-    final List<LeftWristHeight> leftWristHeight = [];
-
-    // TODO: 700をどう決めるか
-    // fps * 動画秒数？
-    final indexList = [for (var i = 1; i <= 700; i++) i];
-    for (final index in indexList) {
-      final indexStr = index.toString().padLeft(4, '0');
-      var recognitions = await Tflite.runPoseNetOnImage(
-        path: '$tmpPath/image$indexStr.png',
-        numResults: 1,
-      );
-
-      final keyPoints = recognitions![0]['keypoints'];
-
-      if (keyPoints[5]['x'] < keyPoints[6]['x']) {
-        leftWristHeight.add(LeftWristHeight(index, 1));
-        continue;
-      }
-
-      if (keyPoints[7]['y'] < keyPoints[9]['y']) {
-        leftWristHeight.add(LeftWristHeight(index, 1));
-        continue;
-      }
-
-      leftWristHeight.add(LeftWristHeight(index, keyPoints[9]['y']));
-    }
-
-    Tflite.close();
-
-    final List<LeftWristHeight> list = leftWristHeight
-        .map((e) => LeftWristHeight(e.index, 1.0 - e.y))
-        .toList();
-    log('yList: $list');
-
-    double lastHeight = 0;
-    double lastHeightDelta = 0;
-    List<int> maybeHitIndexList = [];
-
-    for (final height in list) {
-      final currentDelta = height.y - lastHeight;
-      if ((0 < lastHeightDelta && lastHeightDelta < 0.1) &&
-          (-0.1 < currentDelta && currentDelta <= 0)) {
-        maybeHitIndexList.add(height.index);
-      }
-
-      lastHeight = height.y;
-      lastHeightDelta = currentDelta;
-    }
-
-    log('maybeHitIndexList: $maybeHitIndexList');
-
-    final hitIndexList = findHitIndexList(maybeHitIndexList);
-    log('hitIndexList: $hitIndexList');
-
-    return await cutOffMovie(hitIndexList, moviePath);
-  }
+  // Future<List<IndexMoviePath>> estimate(String moviePath) async {
+  //   final tmpPath = await _tmpPath;
+  //   final res = await Tflite.loadModel(
+  //       model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
+  //   log('loadModel result: $res');
+  //
+  //   final List<LeftWristHeight> leftWristHeight = [];
+  //
+  //   // TODO: 700をどう決めるか
+  //   // fps * 動画秒数？
+  //   final indexList = [for (var i = 1; i <= 700; i++) i];
+  //   for (final index in indexList) {
+  //     final indexStr = index.toString().padLeft(4, '0');
+  //     var recognitions = await Tflite.runPoseNetOnImage(
+  //       path: '$tmpPath/image$indexStr.png',
+  //       numResults: 1,
+  //     );
+  //
+  //     final keyPoints = recognitions![0]['keypoints'];
+  //
+  //     if (keyPoints[5]['x'] < keyPoints[6]['x']) {
+  //       leftWristHeight.add(LeftWristHeight(index, 1));
+  //       continue;
+  //     }
+  //
+  //     if (keyPoints[7]['y'] < keyPoints[9]['y']) {
+  //       leftWristHeight.add(LeftWristHeight(index, 1));
+  //       continue;
+  //     }
+  //
+  //     leftWristHeight.add(LeftWristHeight(index, keyPoints[9]['y']));
+  //   }
+  //
+  //   Tflite.close();
+  //
+  //   final List<LeftWristHeight> list = leftWristHeight
+  //       .map((e) => LeftWristHeight(e.index, 1.0 - e.y))
+  //       .toList();
+  //   log('yList: $list');
+  //
+  //   double lastHeight = 0;
+  //   double lastHeightDelta = 0;
+  //   List<int> maybeHitIndexList = [];
+  //
+  //   for (final height in list) {
+  //     final currentDelta = height.y - lastHeight;
+  //     if ((0 < lastHeightDelta && lastHeightDelta < 0.1) &&
+  //         (-0.1 < currentDelta && currentDelta <= 0)) {
+  //       maybeHitIndexList.add(height.index);
+  //     }
+  //
+  //     lastHeight = height.y;
+  //     lastHeightDelta = currentDelta;
+  //   }
+  //
+  //   log('maybeHitIndexList: $maybeHitIndexList');
+  //
+  //   final hitIndexList = findHitIndexList(maybeHitIndexList);
+  //   log('hitIndexList: $hitIndexList');
+  //
+  //   return await cutOffMovie(hitIndexList, moviePath);
+  // }
 
   Future<List<IndexMoviePath>> cutOffMovie(
       List<int> indexList, String moviePath) async {
@@ -274,23 +273,23 @@ class MovieRepositoryImpl implements MovieRepository {
 
     // 姿勢推定をして、ストレージに動画を保存
     // ストレージに保存されたパスのリストを返す
-    final indexMoviePathList = await estimate(originMovieFile.path);
-    log('indexMoviePathList: $indexMoviePathList');
+    // final indexMoviePathList = await estimate(originMovieFile.path);
+    // log('indexMoviePathList: $indexMoviePathList');
 
-    for (final indexMoviePath in indexMoviePathList) {
-      // トップの画像をドキュメントストレージに保存する
-      final thumbnailPath = indexMoviePath.moviePath
-          .replaceFirst(extension(indexMoviePath.moviePath), '.png');
-      final indexStr = indexMoviePath.index.toString().padLeft(4, '0');
-      XFile('$tmpPath/image$indexStr.png').saveTo(thumbnailPath);
-
-      // DBにそれぞれのpathを保存する
-      await _database.addMovie(db.MoviesCompanion(
-        thumbnailPath: Value(basename(thumbnailPath)),
-        moviePath: Value(basename(indexMoviePath.moviePath)),
-        swungAt: Value(creationDate),
-      ));
-    }
+    // for (final indexMoviePath in indexMoviePathList) {
+    //   // トップの画像をドキュメントストレージに保存する
+    //   final thumbnailPath = indexMoviePath.moviePath
+    //       .replaceFirst(extension(indexMoviePath.moviePath), '.png');
+    //   final indexStr = indexMoviePath.index.toString().padLeft(4, '0');
+    //   XFile('$tmpPath/image$indexStr.png').saveTo(thumbnailPath);
+    //
+    //   // DBにそれぞれのpathを保存する
+    //   await _database.addMovie(db.MoviesCompanion(
+    //     thumbnailPath: Value(basename(thumbnailPath)),
+    //     moviePath: Value(basename(indexMoviePath.moviePath)),
+    //     swungAt: Value(creationDate),
+    //   ));
+    // }
   }
 
   Future<String> get _localPath async =>
