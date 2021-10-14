@@ -67,6 +67,8 @@ PODS:
     - libwebp
   - wakelock (0.0.1):
     - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - better_player (from `.symlinks/plugins/better_player/ios`)
@@ -80,6 +82,7 @@ DEPENDENCIES:
   - tflite (from `.symlinks/plugins/tflite/ios`)
   - video_thumbnail (from `.symlinks/plugins/video_thumbnail/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
@@ -116,6 +119,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_thumbnail/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
   better_player: 5f77b030c433bd39af0aaaffc184cf4267601a84
@@ -138,6 +143,7 @@ SPEC CHECKSUMS:
   tflite: 7acd11db0915e2d90ab90474413068568eb605f0
   video_thumbnail: c4e2a3c539e247d4de13cd545344fd2d26ffafd1
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
+  webview_flutter_wkwebview: 44aa025fbcf6730d808f1e0d86a5af5ac25fa8de
 
 PODFILE CHECKSUM: 9c6205d1a3a51338b13b83a701717eba56544257
 

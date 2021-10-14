@@ -8,6 +8,7 @@ import 'package:swing_trimmer/main.dart';
 import 'package:swing_trimmer/presentation/movie/movie_detail_page.dart';
 import 'package:swing_trimmer/presentation/movie/movie_list_view_model.dart';
 import 'package:swing_trimmer/presentation/movie/widget/movie_list_bottom_sheet.dart';
+import 'package:swing_trimmer/presentation/setting/privacy_policy_page.dart';
 
 class MovieListPage extends ConsumerWidget {
   const MovieListPage({Key? key}) : super(key: key);
@@ -19,9 +20,29 @@ class MovieListPage extends ConsumerWidget {
         title: Image.asset(
           'assets/images/app_logo.png',
         ),
-        leading: const Icon(Icons.menu, size: 28),
         centerTitle: true,
         toolbarHeight: 44,
+      ),
+      drawer: Drawer(
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              ListTile(
+                title: const Text('利用規約・プライバシーポリシー'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      fullscreenDialog: true,
+                      builder: (_) => const PrivacyPolicyPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
       body: _buildBody(ref),
       floatingActionButton: FloatingActionButton(
