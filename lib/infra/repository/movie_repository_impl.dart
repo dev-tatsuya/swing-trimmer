@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -242,10 +243,16 @@ class MovieRepositoryImpl implements MovieRepository {
 
   @override
   Future<XFile?> pick() async {
-    return _picker.pickVideo(
-      source: ImageSource.gallery,
-      maxDuration: const Duration(seconds: 10),
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+      allowCompression: false,
     );
+
+    if (result == null) {
+      throw Exception('failed to pick video');
+    }
+
+    return XFile(result.files.single.path!);
   }
 
   @override
