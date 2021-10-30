@@ -18,15 +18,15 @@ PODS:
     - PINCache (>= 3.0.1-beta.3)
   - image_picker (0.0.1):
     - Flutter
-  - libwebp (1.2.0):
-    - libwebp/demux (= 1.2.0)
-    - libwebp/mux (= 1.2.0)
-    - libwebp/webp (= 1.2.0)
-  - libwebp/demux (1.2.0):
+  - libwebp (1.2.1):
+    - libwebp/demux (= 1.2.1)
+    - libwebp/mux (= 1.2.1)
+    - libwebp/webp (= 1.2.1)
+  - libwebp/demux (1.2.1):
     - libwebp/webp
-  - libwebp/mux (1.2.0):
+  - libwebp/mux (1.2.1):
     - libwebp/demux
-  - libwebp/webp (1.2.0)
+  - libwebp/webp (1.2.1)
   - mobile-ffmpeg-video (4.4)
   - path_provider (0.0.1):
     - Flutter
@@ -96,7 +96,7 @@ SPEC CHECKSUMS:
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   HLSCachingReverseProxyServer: 59935e1e0244ad7f3375d75b5ef46e8eb26ab181
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
-  libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
+  libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   mobile-ffmpeg-video: 106a02633f3771f558b4cadd3e8bbfe6b756c61b
   path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086

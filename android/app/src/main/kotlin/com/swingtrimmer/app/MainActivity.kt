@@ -1,4 +1,4 @@
-package com.example.swing_trimmer
+package com.swingtrimmer.app
 
 import io.flutter.embedding.android.FlutterActivity
 
